@@ -1,13 +1,15 @@
 import {Piano} from './piano.js';
-import {onsets} from './midi.js';
+import {onsets, sounding} from './midi.js';
 import {$} from './dom.js';
 import {state} from './state.js';
 
-// One audio context and sampler shared by the song and the live keyboard.
-// Voice keys start with 'song:' or 'live:' so each side can be silenced on its own.
+// One audio context and sampler shared by the song, the other hand's accompaniment and the live keyboard.
+// Voice keys start with 'song:', 'acc:' or 'live:' so each can be silenced on its own.
 let audioContext = null, piano = null;
-const songVoices = new Map(); // pitch -> true while the song plays it
-let heardTo = 0;              // song time up to which note onsets have been voiced
+// A group of voices following some notes: `voices` maps pitch -> true while it sounds,
+// `heardTo` is the song time up to which note onsets have been voiced.
+const voiceGroup = (prefix, velocity) => ({prefix, velocity, voices: new Map(), heardTo: 0});
+const song = voiceGroup('song:', 90), accompaniment = voiceGroup('acc:', 70);
 
 export const audioEnabled = () => $('audio').checked;
 
@@ -25,28 +27,39 @@ export async function enableAudio() {
   }
 }
 
-// Keeps the song voices in step with `keys`, the pitches sounding at song time `time`.
-// Runs every animation frame; a pitch struck again while it sounds is restarted.
-export function updateSongVoices(keys, time) {
-  if (!audioEnabled() || !state.playing || !piano || state.practice) keys = new Set();
-  const struck = keys.size && time > heardTo ? onsets(state.song.notes, heardTo, time, state.selected) : new Set();
-  heardTo = time;
-  for (const p of songVoices.keys()) {
-    if (!keys.has(p)) { piano?.stop(`song:${p}`); songVoices.delete(p); }
+// Keeps a voice group in step with `keys`, the pitches of `notes` sounding at song time `time`.
+// A pitch struck again while it sounds is restarted.
+function follow(group, notes, keys, time) {
+  const struck = keys.size && time > group.heardTo ? onsets(notes, group.heardTo, time, state.selected) : new Set();
+  group.heardTo = time;
+  for (const p of group.voices.keys()) {
+    if (!keys.has(p)) { piano?.stop(group.prefix + p); group.voices.delete(p); }
   }
   for (const p of keys) {
-    if (!songVoices.has(p) || struck.has(p)) { piano.start(`song:${p}`, p, 90); songVoices.set(p, true); }
+    if (!group.voices.has(p) || struck.has(p)) { piano.start(group.prefix + p, p, group.velocity); group.voices.set(p, true); }
   }
+}
+
+// Runs every animation frame. `keys` are the practised notes sounding at song time `time`: heard in normal playback,
+// silent while practising. The other hand, when practising one, plays along softer if "Play the other hand" is on.
+export function updateSongVoices(keys, time) {
+  const on = audioEnabled() && state.playing && piano;
+  follow(song, state.song.notes, on && !state.practice ? keys : new Set(), time);
+  const accompanied = on && $('otherHand').checked && state.accompaniment.length;
+  follow(accompaniment, state.accompaniment, accompanied ? sounding(state.accompaniment, time, state.selected) : new Set(), time);
 }
 
 export function silenceSong() {
   piano?.clear('song:');
-  songVoices.clear();
+  piano?.clear('acc:');
+  song.voices.clear();
+  accompaniment.voices.clear();
 }
 
 export function silenceAll() {
   piano?.clear();
-  songVoices.clear();
+  song.voices.clear();
+  accompaniment.voices.clear();
 }
 
 export function startLiveVoice(key, pitch, velocity) {

@@ -2,7 +2,8 @@
 export const state = {
   // Song
   sourceSong: null,              // {notes, tracks, duration} as loaded by parseMidi()
-  song: null,                    // what is played: sourceSong, fitted to the keyboard when that is on
+  song: null,                    // what is played (lit, waited for): the practised hand, fitted to the keyboard if on
+  accompaniment: [],             // notes of the other hand when practising one: drawn faintly, heard if wanted
   selected: new Set(),           // indexes of the tracks being played
 
   // Transport

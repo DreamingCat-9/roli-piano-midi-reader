@@ -4,6 +4,7 @@ import {resetLights, setBrightness} from './lights.js';
 import {enableAudio} from './audio.js';
 import {current, pause, play, seekTo} from './transport.js';
 import {clearLive} from './live.js';
+import {rearrange} from './arrange.js';
 
 // Transport buttons, seek bar, keyboard shortcuts, fullscreen and page lifecycle.
 const formatTime = t => `${Math.floor(t / 60)}:${String(Math.floor(t % 60)).padStart(2, '0')}`;
@@ -43,6 +44,15 @@ function seekWithArrowKeys(event) {
   seekTo(current() + (event.key === 'ArrowRight' ? 1 : -1) * (event.shiftKey ? 1 : 5));
 }
 
+function changeHand() {
+  const hand = $('hand').value, other = hand === 'right' ? 'left' : 'right';
+  const fit = rearrange();
+  if (hand === 'both') { status(`Practising both hands. ${fit}`.trim()); return; }
+  const notes = state.song.notes.filter(n => state.selected.has(n.track)).length;
+  const along = $('otherHand').checked ? `The ${other} hand plays along.` : `The ${other} hand is shown faintly.`;
+  status(notes ? `Practising the ${hand} hand (${notes} notes). ${along} ${fit}`.trim() : `This song has no ${hand}-hand notes in the selected tracks.`);
+}
+
 async function toggleFullscreen() {
   const panel = playerPanel();
   try {
@@ -58,6 +68,7 @@ export function initControls() {
   $('play').onclick = play;
   $('stop').onclick = stop;
   $('seek').oninput = () => seekTo(Number($('seek').value));
+  $('hand').onchange = changeHand;
   $('fullscreen').onclick = toggleFullscreen;
   document.addEventListener('fullscreenchange', () => {
     const active = document.fullscreenElement === playerPanel();

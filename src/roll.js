@@ -1,7 +1,7 @@
 import {upcoming} from './midi.js';
 import {$, TRACK_COLORS} from './dom.js';
 import {state} from './state.js';
-import {fitEnabled} from './keyboard.js';
+import {fitEnabled} from './arrange.js';
 
 // Canvas piano roll: notes fall towards an on-screen keyboard.
 const canvas = $('canvas'), ctx = canvas.getContext('2d');
@@ -13,7 +13,7 @@ const isBlack = p => [1, 3, 6, 8, 10].includes(p % 12);
 function keyRange() {
   let min = 48, max = 83;
   if (fitEnabled()) ({low: min, high: max} = state.keyboard);
-  else for (const n of state.song.notes) {
+  else for (const n of [...state.song.notes, ...state.accompaniment]) {
     if (state.selected.has(n.track)) { min = Math.min(min, n.pitch); max = Math.max(max, n.pitch); }
   }
   min = Math.max(0, min);
@@ -67,21 +67,25 @@ export function drawRoll(time, keys) {
     ctx.stroke();
   }
 
-  // Falling notes
-  for (const n of song.notes) {
-    if (!selected.has(n.track) || n.end < time || n.start > time + ahead) continue;
-    const g = geometry.get(n.pitch);
-    if (!g) continue;
-    const top = Math.max(0, line - (n.end - time) / ahead * line);
-    const bottom = Math.min(line, line - (n.start - time) / ahead * line);
-    if (bottom <= top) continue;
-    ctx.fillStyle = TRACK_COLORS[n.track % TRACK_COLORS.length];
-    ctx.globalAlpha = n.start <= time ? 1 : .8;
-    ctx.beginPath();
-    ctx.roundRect(g.x + 2, top, Math.max(1, g.width - 4), Math.max(2, bottom - top), 4);
-    ctx.fill();
-    ctx.globalAlpha = 1;
-  }
+  // Falling notes; the other hand's notes, when practising one hand, are drawn faintly behind
+  const drawNotes = (notes, faint) => {
+    for (const n of notes) {
+      if (!selected.has(n.track) || n.end < time || n.start > time + ahead) continue;
+      const g = geometry.get(n.pitch);
+      if (!g) continue;
+      const top = Math.max(0, line - (n.end - time) / ahead * line);
+      const bottom = Math.min(line, line - (n.start - time) / ahead * line);
+      if (bottom <= top) continue;
+      ctx.fillStyle = TRACK_COLORS[n.track % TRACK_COLORS.length];
+      ctx.globalAlpha = faint ? .22 : n.start <= time ? 1 : .8;
+      ctx.beginPath();
+      ctx.roundRect(g.x + 2, top, Math.max(1, g.width - 4), Math.max(2, bottom - top), 4);
+      ctx.fill();
+      ctx.globalAlpha = 1;
+    }
+  };
+  drawNotes(state.accompaniment, true);
+  drawNotes(song.notes, false);
 
   // Keyboard: white when lit, green for an upcoming hint
   ctx.fillStyle = '#8dbdff';
