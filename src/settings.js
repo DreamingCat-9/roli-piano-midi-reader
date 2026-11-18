@@ -67,7 +67,7 @@ async function testDimKeys() {
   const middle = keyboard ? Math.round((keyboard.low + keyboard.high) / 2) : 60;
   const c = middle - middle % 12, keys = [c, c + 4, c + 7];
   $('testDim').disabled = true;
-  status(`${keys.map(noteName).join(', ')}: dim, medium, full, for 3 seconds. If they look the same, choose the blink under "Keys lit ahead".`);
+  status(`${keys.map(noteName).join(', ')}: dim, medium, full, for 3 seconds. If they look the same, keep the blink under "Keys lit ahead".`);
   try { await testBrightness(keys); } finally { $('testDim').disabled = false; }
 }
 
