@@ -1,5 +1,5 @@
 import {Practice} from './practice.js';
-import {noteName} from './midi.js';
+import {noteName, loopTimes} from './midi.js';
 import {setBrightness} from './lights.js';
 import {$, status} from './dom.js';
 import {state, now} from './state.js';
@@ -108,9 +108,15 @@ export function tick() {
     return;
   }
   const time = current();
+  // A loop goes back to its first bar once its last bar is over (while practising, once the next chord is past it)
+  const loop = loopTimes(song, state.loop);
+  if (loop && time >= loop.end - 1e-6) {
+    seekTo(loop.start);
+    return;
+  }
   // A hidden page only gets about one timer tick per second, so practice then sends every light up to the next chord.
   const lookahead = practice && document.hidden ? Infinity : LOOKAHEAD * rate;
-  const until = Math.min(song.duration, practice?.next?.time ?? Infinity, time + lookahead);
+  const until = Math.min(song.duration, loop?.end ?? Infinity, practice?.next?.time ?? Infinity, time + lookahead);
   if (practice?.arrive(time)) showRequired();
   const lead = Number($('lightEarly').value) * rate; // "Light keys early", in real seconds at any speed
   const dim = $('earlyStyle').value === 'dim';      // keys lit early dimmer, or at full brightness with blinking

@@ -1,4 +1,4 @@
-import {upcoming, noteName} from './midi.js';
+import {upcoming, noteName, barAt} from './midi.js';
 import {$, TRACK_COLORS} from './dom.js';
 import {state} from './state.js';
 import {fitEnabled} from './arrange.js';
@@ -17,7 +17,7 @@ const STRIKE_WINDOW = .15;  // s at 100 % speed: how long a key reads "press now
 const BEAM = .5;            // share of the roll's height a beam of light climbs
 const FONT = '"Instrument Sans", system-ui, sans-serif';
 const COLORS = {
-  lane: '#1b1626', octave: '#2a2338', second: '#221c2e', hit: '#f2ece4', bed: '#0f0c16',
+  lane: '#1b1626', octave: '#2a2338', bar: '#3a3150', barLabel: '#9890ab', hit: '#f2ece4', bed: '#0f0c16',
   white: '#ece6dc', black: '#241e2e', cLabel: '#5e5770', ink: '#1b1626', idle: '#ffffff', wrong: '#ff6b5e',
 };
 const HAND_COLORS = {right: '#ffb547', left: '#5ed4e6'};
@@ -130,18 +130,28 @@ export function drawRoll(time, sounding, pressed) {
   const [min, max] = keyRange();
   const {whites, geometry} = keyGeometry(min, max, w);
 
-  // The roll: a line at each octave's C, a faint line each second
+  // The roll: a line at each octave's C, and a dashed, numbered line where each bar starts
   ctx.fillStyle = COLORS.lane;
   ctx.fillRect(0, 0, w, line);
   ctx.lineWidth = 1;
-  ctx.strokeStyle = COLORS.second;
-  for (let s = Math.ceil(time); s < time + ahead; s++) {
-    const y = Math.round(line - (s - time) / ahead * line) + .5;
+  const bars = song.bars ?? [];
+  ctx.strokeStyle = COLORS.bar;
+  ctx.setLineDash([2, 4]);
+  for (let i = barAt(bars, time); i < bars.length && bars[i] < time + ahead; i++) {
+    if (bars[i] < time) continue;
+    const y = Math.round(line - (bars[i] - time) / ahead * line) + .5;
     ctx.beginPath();
     ctx.moveTo(0, y);
     ctx.lineTo(w, y);
     ctx.stroke();
+    ctx.fillStyle = COLORS.barLabel;
+    ctx.font = `600 12px ${FONT}`;
+    ctx.fontStretch = 'normal';
+    ctx.textAlign = 'left';
+    ctx.textBaseline = 'alphabetic';
+    if (y > 16) ctx.fillText(String(i + 1), 8, y - 5);
   }
+  ctx.setLineDash([]);
   ctx.strokeStyle = COLORS.octave;
   for (const p of whites) {
     if (p % 12 || p === min) continue;

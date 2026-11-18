@@ -5,14 +5,22 @@ import {enableAudio} from './audio.js';
 import {current, pause, play, seekTo} from './transport.js';
 import {clearLive} from './live.js';
 import {rearrange, practisedHand} from './arrange.js';
+import {barAt} from './midi.js';
 
 // Transport buttons, seek bar, keyboard shortcuts, fullscreen and page lifecycle.
 const formatTime = t => `${Math.floor(t / 60)}:${String(Math.floor(t % 60)).padStart(2, '0')}`;
 const playerPanel = () => document.querySelector('.player');
 
+let shownBar = '';
+
+// Runs every frame: time, position on the seek bar (and how much of it is played), and the bar playing.
 export function showTime(time) {
-  $('time').textContent = `${formatTime(time)} / ${formatTime(state.song.duration)}`;
+  const {duration, bars} = state.song;
+  $('time').textContent = `${formatTime(time)} / ${formatTime(duration)}`;
   if (document.activeElement !== $('seek')) $('seek').value = time;
+  $('seek').style.setProperty('--pos', `${duration ? time / duration * 100 : 0}%`);
+  const bar = bars?.length > 1 ? `Bar ${barAt(bars, time) + 1} of ${bars.length}` : '';
+  if (bar !== shownBar) $('barInfo').textContent = shownBar = bar;
 }
 
 // Stops, rewinds and switches the key lights and backlight off. Play restores the brightness.

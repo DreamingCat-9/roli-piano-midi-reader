@@ -7,7 +7,9 @@
 //   live.js         keyboard input: notes, sustain, Piano arrow buttons
 //   device.js       Web MIDI access, output and input selection, disconnect (the Your Piano sheet)
 //   pianoStatus.js  the Piano pill in the top bar
-//   song.js         loading MIDI files and the demo, track list
+//   song.js         loading a song (or the demo), track list
+//   library.js      your songs, kept in this browser: open, remove, resume where you stopped, drop a file
+//   loop.js         looping a range of bars
 //   keyboard.js     the player's key range
 //   arrange.js      what is played: the practised hand (hands.js), fitted to the keys (fit.js)
 //   roll.js         canvas piano roll
@@ -21,7 +23,8 @@ import {sounding} from './midi.js';
 import {state} from './state.js';
 import {initNotice} from './notice.js';
 import {initSettings} from './settings.js';
-import {initSongControls, loadDemo} from './song.js';
+import {initLoop} from './loop.js';
+import {initLibrary} from './library.js';
 import {initKeyboard} from './keyboard.js';
 import {initDevice, autoConnect} from './device.js';
 import {initControls, showTime} from './controls.js';
@@ -42,10 +45,10 @@ function frame() {
 initNotice(autoConnect); // the Piano links by itself once the notice is accepted
 initSettings();
 initKeyboard();
-initSongControls();
 initDevice();
 initControls();
+initLoop();
 setInterval(updateButtonApi, 1000);
 setInterval(tick, 25);
-loadDemo();
+initLibrary(); // the demo, then the last song played, where it was left
 frame();

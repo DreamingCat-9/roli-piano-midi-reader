@@ -52,7 +52,6 @@ button svg { fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap
 .player:fullscreen { width: 100vw; height: 100vh; }
 .topbar { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 10px 16px; flex-wrap: wrap; }
 .song { display: flex; align-items: center; gap: 12px; min-width: 0; }
-.mark { color: var(--text); flex-shrink: 0; }
 #title { margin: 0; font-size: 22px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .topActions { display: flex; align-items: center; gap: 4px; flex-wrap: wrap; }
 #instrumentIcon { font-size: 17px; line-height: 1; }
@@ -70,7 +69,7 @@ canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block
 .playButton svg, #stop svg { fill: currentColor; stroke: none; }
 .playButton .pauseIcon, .playButton.playing .playIcon { display: none; }
 .playButton.playing .pauseIcon { display: block; }
-.progress { flex: 1 1 280px; min-width: 200px; display: flex; align-items: center; gap: 14px; }
+.progress { flex: 1 1 200px; min-width: 160px; display: flex; align-items: center; gap: 14px; }
 #seek { flex: 1; min-width: 0; }
 #time { font-size: 13px; color: var(--muted); font-variant-numeric: tabular-nums; white-space: nowrap; }
 
@@ -80,6 +79,25 @@ input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; width: 18px;
 input[type=range]::-moz-range-track { height: 6px; border-radius: 3px; background: var(--line-strong); }
 input[type=range]::-moz-range-progress { height: 6px; border-radius: 3px; background: var(--text); }
 input[type=range]::-moz-range-thumb { width: 18px; height: 18px; border: 0; border-radius: 50%; background: var(--text); }
+/* The seek bar: played part in ivory, a loop as an amber band (both set from JS) */
+#seek::-webkit-slider-runnable-track {
+  background:
+    linear-gradient(to right, transparent var(--loop-start, 0%), rgba(255, 181, 71, .5) var(--loop-start, 0%) var(--loop-end, 0%), transparent var(--loop-end, 0%)),
+    linear-gradient(to right, var(--text) var(--pos, 0%), transparent var(--pos, 0%)),
+    var(--line-strong);
+}
+#seek::-moz-range-track {
+  background:
+    linear-gradient(to right, transparent var(--loop-start, 0%), rgba(255, 181, 71, .5) var(--loop-start, 0%) var(--loop-end, 0%), transparent var(--loop-end, 0%)),
+    var(--line-strong);
+}
+
+.loopControl { display: flex; align-items: center; gap: 6px; font-size: 14px; color: var(--muted); }
+#loop[aria-pressed="true"] { color: var(--amber); background: rgba(255, 181, 71, .14); }
+#loopBars { display: flex; align-items: center; gap: 6px; white-space: nowrap; }
+#loopBars[hidden] { display: none; }
+#loopBars input { width: 58px; min-height: 36px; padding: 0 8px; border: 1px solid var(--line-strong); border-radius: 8px; background: var(--raised); color: var(--text); font: inherit; font-size: 14px; font-variant-numeric: tabular-nums; }
+#barInfo { font-size: 14px; white-space: nowrap; }
 
 /* Segmented choices (hands, speed): radio buttons drawn as one pill */
 .segmented { display: flex; margin: 0; padding: 3px; border: 0; border-radius: 999px; background: var(--raised); }
@@ -150,6 +168,17 @@ select {
   border: 1px solid var(--line-strong); border-radius: 10px; background: var(--raised); color: var(--text); font: inherit; font-size: 14px;
 }
 #pianoDialog .settingsBody button { width: 100%; margin: 10px 0; }
+dialog.sheet.left { inset: 0 auto 0 0; border-left: 0; border-right: 1px solid var(--line-strong); }
+#loadMidi { width: 100%; margin: 18px 0 6px; }
+.songList { list-style: none; margin: 8px 0 0; padding: 0; }
+.songList li { display: flex; align-items: center; gap: 4px; border-top: 1px solid var(--line); }
+.songRow { flex: 1; min-width: 0; flex-direction: column; align-items: flex-start; gap: 2px; min-height: 64px; padding: 8px 10px; border-radius: 10px; background: transparent; text-align: left; white-space: normal; }
+.songRow:hover { background: var(--raised); }
+.songRow strong { font-size: 16px; font-weight: 600; }
+.songRow[aria-current="true"] strong { color: var(--amber); }
+#dropHint { position: fixed; inset: 12px; z-index: 20; display: flex; align-items: center; justify-content: center; border: 3px dashed var(--amber); border-radius: 18px; background: rgba(10, 8, 16, .8); pointer-events: none; }
+#dropHint[hidden] { display: none; }
+#dropHint p { font-size: 26px; font-weight: 600; }
 #pianoDialog #connection { margin: 18px 0 8px; font-size: 14px; }
 
 #instrumentDialog { max-width: 680px; }
