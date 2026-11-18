@@ -4,6 +4,9 @@ import {enableAudio, silenceAll} from './audio.js';
 import {pause, play} from './transport.js';
 import {clearLive} from './live.js';
 import {updateButtonApi} from './pianoButtons.js';
+import {testBrightness} from './keyLights.js';
+import {setBrightness} from './lights.js';
+import {noteName} from './midi.js';
 
 // Settings dialog and instrument picker.
 const INSTRUMENT_ICONS = {acoustic_grand_piano: '🎹', electric_piano_1: '🎛️', drawbar_organ: '🎼', music_box: '🎁', xylophone: '🥁'};
@@ -55,6 +58,19 @@ function initInstrumentPicker() {
   }
 }
 
+// Lights C, E and G in the middle of the player's keys, from dim to full, to see whether the Piano shows it.
+async function testDimKeys() {
+  const {output, keyboard, midi} = state;
+  if (!output) { status('Connect your Piano first, then test again.'); return; }
+  pause();
+  if (midi?.sysexEnabled) await setBrightness(output, state.originalBrightness.get(output.id) ?? 100); // Stop turns it off
+  const middle = keyboard ? Math.round((keyboard.low + keyboard.high) / 2) : 60;
+  const c = middle - middle % 12, keys = [c, c + 4, c + 7];
+  $('testDim').disabled = true;
+  status(`${keys.map(noteName).join(', ')}: dim, medium, full, for 3 seconds. If they look the same, choose the blink under "Keys lit ahead".`);
+  try { await testBrightness(keys); } finally { $('testDim').disabled = false; }
+}
+
 function initSettingsDialog() {
   const dialog = $('settingsDialog');
   $('openSettings').onclick = () => { if (state.noticeAccepted) dialog.showModal(); };
@@ -81,11 +97,12 @@ function initSettingsDialog() {
     }
     if (resume) play();
   };
-  $('lightEarly').onchange = () => {
+  $('lightEarly').onchange = $('earlyStyle').onchange = () => {
     const resume = state.playing;
     pause(); // the lights already sent were timed for the old setting
     if (resume) play();
   };
+  $('testDim').onclick = testDimKeys;
   $('speed').oninput = () => {
     const resume = state.playing;
     pause();

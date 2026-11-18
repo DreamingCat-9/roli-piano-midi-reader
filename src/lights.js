@@ -14,15 +14,20 @@ export async function readBrightness(port,input){
  let bits=0n;payload.forEach((b,i)=>bits|=BigInt(b)<<BigInt(i*7));let pos=32;const read=n=>{const v=Number((bits>>BigInt(pos))&((1n<<BigInt(n))-1n));pos+=n;return v;};while(pos+7<=payload.length*7){const type=read(7);if(type!==24)return;const cmd=read(4);if(cmd!==0&&cmd!==4)return;if(pos+40>payload.length*7)return;const item=read(8),value=read(32);if(item===36){finish(value);return;}if(cmd===4)pos+=64;}
  };input.addEventListener('midimessage',handler);timer=setTimeout(()=>finish(null),1000);try{port.send(configPacket(36,0,true));}catch{finish(null);}});
 }
-// Note messages that move the key lights from `lit` (pitch → time its light came on) to the pitches in `next` at `at` ms.
-// A lit key that is struck again is switched off up to `gap` ms early, so a repeated note shows as a new strike.
+// Note messages that move the key lights from `lit` (pitch → {at: time its light came on, velocity}) to `next` at `at`
+// ms. `next` maps each pitch to light to its note-on velocity, which may set its brightness; a Set lights at 127.
+// A key struck again at the same velocity is switched off up to `gap` ms early, so the new strike shows; one whose
+// velocity changes (dim to full) just takes the new velocity.
 export function lightChanges(lit,next,at,struck=new Set(),gap=60){
+ const want=next instanceof Map?next:new Map([...next].map(p=>[p,127]));
  const messages=[],now=new Map();
- for(const p of lit.keys())if(!next.has(p))messages.push({data:[0x80,p,0],at});
- for(const p of next){
-  if(!lit.has(p)){messages.push({data:[0x90,p,127],at});now.set(p,at);}
-  else if(struck.has(p)){messages.push({data:[0x80,p,0],at:Math.min(at,Math.max(lit.get(p)+1,at-gap))},{data:[0x90,p,127],at});now.set(p,at);}
-  else now.set(p,lit.get(p));
+ for(const p of lit.keys())if(!want.has(p))messages.push({data:[0x80,p,0],at});
+ for(const [p,velocity] of want){
+  const was=lit.get(p);
+  if(!was){messages.push({data:[0x90,p,velocity],at});now.set(p,{at,velocity});}
+  else if(struck.has(p)&&was.velocity===velocity){messages.push({data:[0x80,p,0],at:Math.min(at,Math.max(was.at+1,at-gap))},{data:[0x90,p,velocity],at});now.set(p,{at,velocity});}
+  else if(was.velocity!==velocity){messages.push({data:[0x90,p,velocity],at});now.set(p,{at:was.at,velocity});}
+  else now.set(p,was);
  }
  return {messages,lit:now};
 }

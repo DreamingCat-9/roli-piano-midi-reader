@@ -4,7 +4,7 @@ import {setBrightness} from './lights.js';
 import {$, status} from './dom.js';
 import {state, now} from './state.js';
 import {enableAudio, audioEnabled, silenceSong} from './audio.js';
-import {scheduleLights, restartLights, silenceLights, blinkWaiting} from './keyLights.js';
+import {scheduleLights, restartLights, silenceLights, blinkWaiting, DIM_VELOCITY} from './keyLights.js';
 import {updateButtonApi} from './pianoButtons.js';
 
 const LOOKAHEAD = 0.12; // seconds of song sent to the Piano ahead of time, at 100 % speed
@@ -110,9 +110,10 @@ export function tick() {
   const until = Math.min(song.duration, practice?.next?.time ?? Infinity, time + lookahead);
   if (practice?.arrive(time)) showRequired();
   const lead = Number($('lightEarly').value) * rate; // "Light keys early", in real seconds at any speed
+  const dim = $('earlyStyle').value === 'dim';      // keys lit early dimmer, or at full brightness with blinking
   try {
-    scheduleLights(time, until, lead);
-    blinkWaiting(lead > 0);
+    scheduleLights(time, until, lead, dim ? DIM_VELOCITY : 127);
+    blinkWaiting(lead > 0 && !dim);
   } catch (e) {
     pause();
     status(`Could not send MIDI: ${e.message}`);
