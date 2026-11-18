@@ -28,6 +28,8 @@ export function parseMidi(buffer){
  }
  notes.sort((a,b)=>a.start-b.start);return {notes,tracks,duration:notes.reduce((end,n)=>Math.max(end,n.end),time)};
 }
+const NOTE_NAMES=['C','C♯','D','D♯','E','F','F♯','G','G♯','A','A♯','B'];
+export const noteName=pitch=>NOTE_NAMES[pitch%12]+(Math.floor(pitch/12)-1);
 export function sounding(notes,time,selected){return new Set(notes.filter(n=>selected.has(n.track)&&n.start<=time&&time<n.end).map(n=>n.pitch));}
 // Pitches struck in (from, to]. A repeated note keeps its pitch in sounding(), so this is what marks the new strike.
 export function onsets(notes,from,to,selected){return new Set(notes.filter(n=>selected.has(n.track)&&n.start>from&&n.start<=to).map(n=>n.pitch));}

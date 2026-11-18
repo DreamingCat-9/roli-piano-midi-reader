@@ -65,7 +65,8 @@ async function chooseInput() {
     await candidate.open();
     state.input = candidate;
     candidate.onmidimessage = receiveMidi;
-    status(`Keyboard audio ready: ${candidate.name}. Play a key to hear it.`);
+    const tip = state.keyboard ? '' : ' Then use Settings → Detect my keys so songs fit your keyboard.';
+    status(`Keyboard audio ready: ${candidate.name}. Play a key to hear it.${tip}`);
   } catch (e) {
     status(`Could not open MIDI input: ${e.message}`);
   } finally {

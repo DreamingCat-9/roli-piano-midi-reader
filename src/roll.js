@@ -1,16 +1,19 @@
 import {upcoming} from './midi.js';
 import {$, TRACK_COLORS} from './dom.js';
 import {state} from './state.js';
+import {fitEnabled} from './keyboard.js';
 
 // Canvas piano roll: notes fall towards an on-screen keyboard.
 const canvas = $('canvas'), ctx = canvas.getContext('2d');
 const KEY_HEIGHT = 78;
 const isBlack = p => [1, 3, 6, 8, 10].includes(p % 12);
 
-// Pitches shown: at least C3–B5, widened to every note of the selected tracks, starting and ending on white keys.
+// Pitches shown: the player's keyboard when the song is fitted to it; otherwise at least C3–B5, widened to every
+// note of the selected tracks. Always starts and ends on white keys.
 function keyRange() {
   let min = 48, max = 83;
-  for (const n of state.song.notes) {
+  if (fitEnabled()) ({low: min, high: max} = state.keyboard);
+  else for (const n of state.song.notes) {
     if (state.selected.has(n.track)) { min = Math.min(min, n.pitch); max = Math.max(max, n.pitch); }
   }
   min = Math.max(0, min);

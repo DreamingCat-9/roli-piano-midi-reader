@@ -2,14 +2,16 @@ import {parseMidi} from './midi.js';
 import {$, status, TRACK_COLORS} from './dom.js';
 import {state} from './state.js';
 import {pause, play} from './transport.js';
+import {applyFit} from './keyboard.js';
 
 const MAX_FILE_SIZE = 20 * 1024 * 1024;
 
 export function loadSong(song, title) {
   pause();
-  state.song = song;
+  state.sourceSong = song;
   state.position = 0;
   state.selected = new Set(song.tracks.map((_, i) => i));
+  const fit = applyFit();
   $('title').textContent = title;
   $('seek').max = song.duration;
   const list = $('tracks');
@@ -25,13 +27,14 @@ export function loadSong(song, title) {
       pause();
       if (box.checked) state.selected.add(i);
       else state.selected.delete(i);
+      applyFit(); // the best octave depends on the tracks played
       if (resume) play();
     });
     label.append(box, document.createTextNode(track.name || `Track ${i + 1}`));
     label.style.color = TRACK_COLORS[i % TRACK_COLORS.length];
     list.append(label);
   });
-  status(`${song.notes.length} notes · ${song.tracks.length} tracks · Files stay on your computer.`);
+  status(`${song.notes.length} notes · ${song.tracks.length} tracks · Files stay on your computer.${fit ? ` ${fit}` : ''}`);
 }
 
 export function loadDemo() {

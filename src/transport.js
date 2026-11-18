@@ -1,4 +1,5 @@
 import {Practice} from './practice.js';
+import {noteName} from './midi.js';
 import {setBrightness} from './lights.js';
 import {$, status} from './dom.js';
 import {state, now} from './state.js';
@@ -6,7 +7,6 @@ import {enableAudio, audioEnabled, silenceSong} from './audio.js';
 import {scheduleLights, restartLights, silenceLights} from './keyLights.js';
 import {updateButtonApi} from './pianoButtons.js';
 
-const NOTE_NAMES = ['C', 'C♯', 'D', 'D♯', 'E', 'F', 'F♯', 'G', 'G♯', 'A', 'A♯', 'B'];
 const LOOKAHEAD = 0.12; // seconds of song sent to the Piano ahead of time, at 100 % speed
 
 // Current song time. While practising it stops at the chord the player still has to play.
@@ -67,7 +67,7 @@ export function seekTo(time) {
 export function showRequired() {
   const {practice} = state;
   if (!practice?.waiting) return;
-  const names = [...practice.missing].map(p => NOTE_NAMES[p % 12] + (Math.floor(p / 12) - 1));
+  const names = [...practice.missing].map(noteName);
   status(`Waiting for: ${names.join(', ')}. Play these notes on your keyboard.`);
 }
 
