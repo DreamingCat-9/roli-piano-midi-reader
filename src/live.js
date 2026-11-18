@@ -17,7 +17,8 @@ const BUTTON_SEEK = 5;                 // seconds per arrow press
 const held = new Map();
 const pedal = new Set(); // channels whose sustain pedal is down
 
-export const heldPitches = () => [...held.values()].map(n => n.pitch);
+// Keys physically down (not those only kept sounding by the sustain pedal).
+export const pressedPitches = () => new Set([...held.values()].filter(n => n.down).map(n => n.pitch));
 
 export function clearLive() {
   held.clear();

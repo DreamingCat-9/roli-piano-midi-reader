@@ -27,15 +27,14 @@ import {initControls, showTime} from './controls.js';
 import {current, tick} from './transport.js';
 import {updateButtonApi} from './pianoButtons.js';
 import {updateSongVoices} from './audio.js';
-import {heldPitches} from './live.js';
+import {pressedPitches} from './live.js';
 import {drawRoll} from './roll.js';
 
 function frame() {
   const time = current();
   const keys = state.playing ? sounding(state.song.notes, time, state.selected) : new Set();
   updateSongVoices(keys, time);
-  for (const pitch of heldPitches()) keys.add(pitch);
-  drawRoll(time, keys);
+  drawRoll(time, keys, pressedPitches());
   showTime(time);
   requestAnimationFrame(frame);
 }
