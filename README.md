@@ -18,7 +18,7 @@ Based on [ROLILearn4All](https://github.com/ClockworkPirate/ROLILearn4All) by Cl
 
 Notes and keys take the colour of the hand that plays them: amber for the right hand, cyan for the left. The bar under the notes chooses the hand to practise, turns **Wait for me** on and sets the speed; Settings holds the rest (tracks, your keys, the Piano's lights, sound and display), including **Theme**: dark, light, or like your computer. Piano audio is on by default and also responds to your keyboard, including velocity and sustain. **Disconnect and clear lights**, in Your Piano, sends note releases and turns off key lighting; reconnecting restores brightness.
 
-You may need ROLI's Windows driver. Close Ableton's ROLI control surface while using the player to avoid competing lighting commands. Only notes within your Piano's current octave range can light its keys.
+You may need ROLI's Windows driver. Close Ableton's ROLI control surface while using the player to avoid competing lighting commands. Only notes within your Piano's current octave range can light its keys. When a ROLI Piano links and its keys are not known yet, the player takes its 49 keys in their usual place, C2 to C6, and fits songs onto them; if your Piano plays another octave (+ / −), play any key and the player follows, or use **Detect my keys** in Settings.
 
 ## Run locally
 

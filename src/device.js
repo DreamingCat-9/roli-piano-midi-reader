@@ -4,6 +4,7 @@ import {state} from './state.js';
 import {pause} from './transport.js';
 import {receiveMidi, clearLive} from './live.js';
 import {showPianoStatus} from './pianoStatus.js';
+import {assumeKeyboard} from './keyboard.js';
 
 // Web MIDI access and the choice of Piano output (lights) and keyboard input.
 
@@ -102,6 +103,7 @@ async function chooseOutput() {
   try {
     await candidate.open();
     state.output = candidate;
+    const keys = assumeKeyboard(candidate.name); // a ROLI Piano's keys, until detected otherwise
     if (state.midi.sysexEnabled) {
       await chooseInput();
       const {originalBrightness} = state;
@@ -113,7 +115,7 @@ async function chooseOutput() {
     }
     $('connection').textContent = `Connected: ${state.output.name}`;
     $('disconnect').disabled = false;
-    status('Piano ready. Press Play to light the keys.');
+    status(`Piano ready. Press Play to light the keys.${keys ? ` ${keys}` : ''}`);
   } catch (e) {
     status(`Could not open MIDI output: ${e.message}`);
   } finally {

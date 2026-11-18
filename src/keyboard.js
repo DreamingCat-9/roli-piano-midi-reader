@@ -3,6 +3,7 @@ import {$, status} from './dom.js';
 import {state} from './state.js';
 import {fitEnabled, rearrange} from './arrange.js';
 import {showPianoStatus} from './pianoStatus.js';
+import {knownKeyboard} from './fit.js';
 
 // The player's keyboard: which pitches its keys play. Songs are fitted onto it by arrange.js.
 // The range is detected by pressing the leftmost and rightmost keys, and remembered in this browser.
@@ -12,7 +13,7 @@ let detectedLow = 0;
 
 const rangeText = ({low, high}) => `${noteName(low)} to ${noteName(high)} (${high - low + 1} keys)`;
 
-function showRange(text = state.keyboard ? `Your keys: ${rangeText(state.keyboard)}.` : 'Not detected yet.') {
+function showRange(text = state.keyboard ? `Your keys: ${rangeText(state.keyboard)}.` : 'Not detected yet. A ROLI Piano\'s 49 keys are taken when it links.') {
   $('keyboardRange').textContent = text;
   showPianoStatus();
 }
@@ -26,6 +27,18 @@ function loadRange() {
 
 function saveRange() {
   try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state.keyboard)); } catch {}
+}
+
+// A Piano linked while no range is known: when its port name tells its keys (a ROLI Piano: 49 keys, C2 to C6),
+// they become the range, so the screen draws its keys at once. If it plays another octave (+ / −), the first key
+// played outside the range moves it, as below. Returns a sentence for the status line, or ''.
+export function assumeKeyboard(portName) {
+  const keys = state.keyboard ? null : knownKeyboard(portName);
+  if (!keys) return '';
+  state.keyboard = keys;
+  saveRange();
+  showRange();
+  return `Its ${keys.high - keys.low + 1} keys are drawn, ${noteName(keys.low)} to ${noteName(keys.high)}; if it plays another octave, play any key and the player follows. ${rearrange()}`.trim();
 }
 
 // Called for every key pressed. Returns true when the press was used for the keyboard range rather than the song.

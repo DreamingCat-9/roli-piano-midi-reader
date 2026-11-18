@@ -1,5 +1,11 @@
 // Fitting a song onto the player's keyboard, whose keys play the pitches low..high.
 
+// The keys of a keyboard known from its MIDI port name, in their default octave, or null. A ROLI Piano has 49 keys,
+// C2 to C6 until its + / − buttons move it; the smaller Piano M is left to detection.
+export function knownKeyboard(portName) {
+  return /ROLI Piano(?! ?M\b)/i.test(portName ?? '') ? {low: 36, high: 84} : null;
+}
+
 const OCTAVE_SHIFTS = [0, -12, 12, -24, 24, -36, 36, -48, 48]; // in order of preference for ties
 
 const onKeys = (pitch, low, high) => pitch >= low && pitch <= high;
