@@ -6,7 +6,7 @@ Learn MIDI songs with falling notes, piano audio, and lights on your ROLI Piano.
 
 Based on [ROLILearn4All](https://github.com/ClockworkPirate/ROLILearn4All) by ClockworkPirate, with wait-mode, lighting, hand and fitting improvements.
 
-![ROLI Learn player with falling notes, track controls, and piano keyboard](docs/ui.png)
+![The player waiting for C4: notes falling in the colour of each hand onto a keyboard of the Piano's 49 keys, the left hand's C3 played, a wrong D4 in coral, and the bar of controls below](docs/ui.png)
 
 ## Get started
 
