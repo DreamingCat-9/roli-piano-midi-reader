@@ -31,6 +31,8 @@ export function parseMidi(buffer){
 const NOTE_NAMES=['C','C♯','D','D♯','E','F','F♯','G','G♯','A','A♯','B'];
 export const noteName=pitch=>NOTE_NAMES[pitch%12]+(Math.floor(pitch/12)-1);
 export function sounding(notes,time,selected){return new Set(notes.filter(n=>selected.has(n.track)&&n.start<=time&&time<n.end).map(n=>n.pitch));}
+// Like sounding(), but until a note's written end (`ring`) when it is let go earlier: what is heard rather than held.
+export function ringing(notes,time,selected){return new Set(notes.filter(n=>selected.has(n.track)&&n.start<=time&&time<(n.ring??n.end)).map(n=>n.pitch));}
 // Pitches struck in (from, to]. A repeated note keeps its pitch in sounding(), so this is what marks the new strike.
 export function onsets(notes,from,to,selected){return new Set(notes.filter(n=>selected.has(n.track)&&n.start>from&&n.start<=to).map(n=>n.pitch));}
 export function upcoming(notes,time,selected,lead=.5,active=new Set()){

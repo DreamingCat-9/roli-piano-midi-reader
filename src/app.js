@@ -32,9 +32,8 @@ import {drawRoll} from './roll.js';
 
 function frame() {
   const time = current();
-  const keys = state.playing ? sounding(state.song.notes, time, state.selected) : new Set();
-  updateSongVoices(keys, time);
-  drawRoll(time, keys, pressedPitches());
+  updateSongVoices(time);
+  drawRoll(time, state.playing ? sounding(state.song.notes, time, state.selected) : new Set(), pressedPitches());
   showTime(time);
   requestAnimationFrame(frame);
 }

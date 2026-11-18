@@ -1,5 +1,5 @@
 import {Piano} from './piano.js';
-import {onsets, sounding} from './midi.js';
+import {onsets, sounding, ringing} from './midi.js';
 import {$} from './dom.js';
 import {state} from './state.js';
 
@@ -40,11 +40,12 @@ function follow(group, notes, keys, time) {
   }
 }
 
-// Runs every animation frame. `keys` are the practised notes sounding at song time `time`: heard in normal playback,
-// silent while practising. The other hand, when practising one, plays along softer if "Play the other hand" is on.
-export function updateSongVoices(keys, time) {
+// Runs every animation frame for song time `time`. The practised notes are heard in normal playback, until their
+// written end even when let go earlier, and are silent while practising. The other hand, when practising one,
+// plays along softer if "Play the other hand" is on.
+export function updateSongVoices(time) {
   const on = audioEnabled() && state.playing && piano;
-  follow(song, state.song.notes, on && !state.practice ? keys : new Set(), time);
+  follow(song, state.song.notes, on && !state.practice ? ringing(state.song.notes, time, state.selected) : new Set(), time);
   const accompanied = on && $('otherHand').checked && state.accompaniment.length;
   follow(accompaniment, state.accompaniment, accompanied ? sounding(state.accompaniment, time, state.selected) : new Set(), time);
 }

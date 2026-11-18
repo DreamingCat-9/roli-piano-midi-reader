@@ -1,10 +1,12 @@
 import {fitSong} from './fit.js';
+import {holdTimes} from './hands.js';
 import {$} from './dom.js';
 import {state} from './state.js';
 import {pause, play} from './transport.js';
 
 // What is played, built from the loaded song: the notes of the hand being practised (state.song), lit and waited
 // for, and the other hand's notes (state.accompaniment). Both are fitted to the player's keys when that is on.
+// In state.song a note's `end` is when to let go; `ring`, when set, is the later written end it is heard until.
 
 export const fitEnabled = () => Boolean(state.keyboard) && $('fitSong').checked;
 export const practisedHand = () => $('hand').value; // 'both', 'right' or 'left'
@@ -25,7 +27,8 @@ export function arrange() {
   const isPractised = n => hand === 'both' || n.hand === hand;
   const fit = fitEnabled() ? fitSong(sourceSong, n => selected.has(n.track) && isPractised(n), keyboard.low, keyboard.high) : null;
   const notes = fit ? fit.song.notes : sourceSong.notes;
-  state.song = {...sourceSong, notes: notes.filter(isPractised)};
+  // Notes still sounding once their hand has moved out of reach are let go: lit and shown as held only until then
+  state.song = {...sourceSong, notes: holdTimes(notes.filter(isPractised), selected)};
   state.accompaniment = notes.filter(n => !isPractised(n));
   return fit ? describeFit(fit) : '';
 }

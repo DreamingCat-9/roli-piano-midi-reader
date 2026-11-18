@@ -110,15 +110,27 @@ export function drawRoll(time, sounding, pressed) {
     ctx.stroke();
   }
 
-  // Falling notes. The other hand's notes, when practising one hand, are drawn faintly behind.
+  // Falling notes. The other hand's notes, when practising one hand, are drawn faintly behind. A note let go before
+  // its written end shows the rest, where it only rings, as a faint glow above its tail.
+  const y = t => line - (t - time) / ahead * line;
   const drawNote = (n, faint) => {
-    if (!selected.has(n.track) || n.end < time || n.start > time + ahead) return;
+    if (!selected.has(n.track) || (n.ring ?? n.end) < time || n.start > time + ahead) return;
     const g = geometry.get(n.pitch);
     if (!g) return;
-    const top = Math.max(0, line - (n.end - time) / ahead * line);
-    const bottom = Math.min(line, line - (n.start - time) / ahead * line);
+    const color = trackColor(n.track), x = g.x + 2, width = Math.max(1, g.width - 4);
+    if (n.ring !== undefined) {
+      const ringTop = Math.max(0, y(n.ring)), ringBottom = Math.min(line, y(Math.max(n.end, time)));
+      if (ringBottom > ringTop) {
+        ctx.fillStyle = alpha(color, .1);
+        roundRect(x + 3, ringTop, Math.max(1, width - 6), ringBottom - ringTop, 3);
+        ctx.fill();
+      }
+    }
+    if (n.end < time) return;
+    const top = Math.max(0, y(n.end));
+    const bottom = Math.min(line, y(n.start));
     if (bottom <= top) return;
-    const color = trackColor(n.track), x = g.x + 2, width = Math.max(1, g.width - 4), height = Math.max(2, bottom - top);
+    const height = Math.max(2, bottom - top);
     if (faint) {
       ctx.fillStyle = alpha(color, .16);
       roundRect(x, top, width, height, 4);
