@@ -4,7 +4,7 @@ import {setBrightness} from './lights.js';
 import {$, status} from './dom.js';
 import {state, now} from './state.js';
 import {enableAudio, audioEnabled, silenceSong} from './audio.js';
-import {scheduleLights, restartLights, silenceLights} from './keyLights.js';
+import {scheduleLights, restartLights, silenceLights, blinkWaiting} from './keyLights.js';
 import {updateButtonApi} from './pianoButtons.js';
 
 const LOOKAHEAD = 0.12; // seconds of song sent to the Piano ahead of time, at 100 % speed
@@ -109,8 +109,10 @@ export function tick() {
   const lookahead = practice && document.hidden ? Infinity : LOOKAHEAD * rate;
   const until = Math.min(song.duration, practice?.next?.time ?? Infinity, time + lookahead);
   if (practice?.arrive(time)) showRequired();
+  const lead = Number($('lightEarly').value) * rate; // "Light keys early", in real seconds at any speed
   try {
-    scheduleLights(time, until);
+    scheduleLights(time, until, lead);
+    blinkWaiting(lead > 0);
   } catch (e) {
     pause();
     status(`Could not send MIDI: ${e.message}`);

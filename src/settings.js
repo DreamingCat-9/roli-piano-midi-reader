@@ -81,6 +81,11 @@ function initSettingsDialog() {
     }
     if (resume) play();
   };
+  $('lightEarly').onchange = () => {
+    const resume = state.playing;
+    pause(); // the lights already sent were timed for the old setting
+    if (resume) play();
+  };
   $('speed').oninput = () => {
     const resume = state.playing;
     pause();
