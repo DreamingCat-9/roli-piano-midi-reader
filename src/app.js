@@ -12,6 +12,7 @@
 //   loop.js         looping a range of bars
 //   report.js       the end-of-song report (numbers from score.js)
 //   update.js       on the published site, reloads once when a newer version is published
+//   theme.js        dark or light colours (Settings › Theme)
 //   keyboard.js     the player's key range
 //   arrange.js      what is played: the practised hand (hands.js), fitted to the keys (fit.js)
 //   roll.js         canvas piano roll
@@ -37,6 +38,7 @@ import {updateSongVoices} from './audio.js';
 import {pressedPitches} from './live.js';
 import {drawRoll} from './roll.js';
 import {checkForUpdate} from './update.js';
+import {initTheme} from './theme.js';
 
 function frame() {
   const time = current();
@@ -48,6 +50,7 @@ function frame() {
 
 initNotice(autoConnect); // the Piano links by itself once the notice is accepted
 initSettings();
+initTheme();
 initKeyboard();
 initDevice();
 initControls();

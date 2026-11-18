@@ -13,13 +13,33 @@
   --text: #f2ece4;         /* ivory */
   --muted: #9890ab;
   --amber: #ffb547;        /* right hand, main action */
-  --amber-ink: #3d2600;
+  --amber-ink: #3d2600;    /* text on amber */
+  --amber-text: #ffb547;   /* amber text on the page */
   --cyan: #5ed4e6;         /* left hand */
   --coral: #ff6b5e;        /* wrong note */
   --mint: #7be0a0;         /* linked, on */
+  --scrim: rgba(10, 8, 16, .7);
+  --selected-shadow: none;
   font-family: 'Instrument Sans', system-ui, sans-serif;
   background: var(--night);
   color: var(--text);
+}
+/* Light theme: Settings › Theme, kept in this browser (data-theme on <html>, set before the page draws) */
+:root[data-theme="light"] {
+  color-scheme: light;
+  --night: #f3f1f7; --lane: #ffffff; --panel: #ffffff; --raised: #e8e4f0; --line: #e3dfec; --line-strong: #cbc4db;
+  --selected: #ffffff; --text: #1d1828; --muted: #5f5873;
+  --amber: #d48000; --amber-ink: #2b1a00; --amber-text: #8f5400; --cyan: #1597ae; --coral: #e5483a; --mint: #1e9e5a;
+  --scrim: rgba(29, 24, 40, .35); --selected-shadow: 0 1px 3px rgba(29, 24, 40, .18);
+}
+@media (prefers-color-scheme: light) {
+  :root[data-theme="system"] {
+    color-scheme: light;
+    --night: #f3f1f7; --lane: #ffffff; --panel: #ffffff; --raised: #e8e4f0; --line: #e3dfec; --line-strong: #cbc4db;
+    --selected: #ffffff; --text: #1d1828; --muted: #5f5873;
+    --amber: #d48000; --amber-ink: #2b1a00; --amber-text: #8f5400; --cyan: #1597ae; --coral: #e5483a; --mint: #1e9e5a;
+    --scrim: rgba(29, 24, 40, .35); --selected-shadow: 0 1px 3px rgba(29, 24, 40, .18);
+  }
 }
 * { box-sizing: border-box; }
 body { margin: 0; background: var(--night); }
@@ -38,7 +58,7 @@ button:hover { background: var(--line-strong); }
 button:disabled { opacity: .45; cursor: default; }
 button svg { fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; flex-shrink: 0; }
 .primary { background: var(--amber); color: var(--amber-ink); font-weight: 600; }
-.primary:hover { background: #ffc46b; }
+.primary:hover { background: color-mix(in srgb, var(--amber) 82%, white); }
 .ghost { background: transparent; color: var(--muted); }
 .ghost:hover { background: var(--raised); color: var(--text); }
 .icon { width: 44px; padding: 0; border-radius: 10px; background: transparent; color: var(--muted); }
@@ -65,7 +85,7 @@ canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block
 
 .transport { display: flex; align-items: center; gap: 16px; padding: 12px 16px 6px; flex-wrap: wrap; }
 .playButton { width: 52px; height: 52px; padding: 0; border-radius: 50%; background: var(--text); color: var(--night); flex-shrink: 0; }
-.playButton:hover { background: #fff; }
+.playButton:hover { background: color-mix(in srgb, var(--text) 85%, var(--night)); }
 .playButton svg, #stop svg { fill: currentColor; stroke: none; }
 .playButton .pauseIcon, .playButton.playing .playIcon { display: none; }
 .playButton.playing .pauseIcon { display: block; }
@@ -82,18 +102,18 @@ input[type=range]::-moz-range-thumb { width: 18px; height: 18px; border: 0; bord
 /* The seek bar: played part in ivory, a loop as an amber band (both set from JS) */
 #seek::-webkit-slider-runnable-track {
   background:
-    linear-gradient(to right, transparent var(--loop-start, 0%), rgba(255, 181, 71, .5) var(--loop-start, 0%) var(--loop-end, 0%), transparent var(--loop-end, 0%)),
+    linear-gradient(to right, transparent var(--loop-start, 0%), color-mix(in srgb, var(--amber) 55%, transparent) var(--loop-start, 0%) var(--loop-end, 0%), transparent var(--loop-end, 0%)),
     linear-gradient(to right, var(--text) var(--pos, 0%), transparent var(--pos, 0%)),
     var(--line-strong);
 }
 #seek::-moz-range-track {
   background:
-    linear-gradient(to right, transparent var(--loop-start, 0%), rgba(255, 181, 71, .5) var(--loop-start, 0%) var(--loop-end, 0%), transparent var(--loop-end, 0%)),
+    linear-gradient(to right, transparent var(--loop-start, 0%), color-mix(in srgb, var(--amber) 55%, transparent) var(--loop-start, 0%) var(--loop-end, 0%), transparent var(--loop-end, 0%)),
     var(--line-strong);
 }
 
 .loopControl { display: flex; align-items: center; gap: 6px; font-size: 14px; color: var(--muted); }
-#loop[aria-pressed="true"] { color: var(--amber); background: rgba(255, 181, 71, .14); }
+#loop[aria-pressed="true"] { color: var(--amber-text); background: color-mix(in srgb, var(--amber) 16%, transparent); }
 #loopBars { display: flex; align-items: center; gap: 6px; white-space: nowrap; }
 #loopBars[hidden] { display: none; }
 #loopBars input { width: 58px; min-height: 36px; padding: 0 8px; border: 1px solid var(--line-strong); border-radius: 8px; background: var(--raised); color: var(--text); font: inherit; font-size: 14px; font-variant-numeric: tabular-nums; }
@@ -105,7 +125,7 @@ input[type=range]::-moz-range-thumb { width: 18px; height: 18px; border: 0; bord
 .segmented input { position: absolute; inset: 0; width: 100%; height: 100%; margin: 0; opacity: 0; cursor: pointer; }
 .segmented span { display: flex; align-items: center; gap: 7px; min-height: 38px; padding: 0 14px; border-radius: 999px; font-size: 14px; color: var(--muted); font-variant-numeric: tabular-nums; }
 .segmented label:hover span { color: var(--text); }
-.segmented input:checked + span { background: var(--selected); color: var(--text); }
+.segmented input:checked + span { background: var(--selected); color: var(--text); box-shadow: var(--selected-shadow); }
 .segmented input:focus-visible + span { outline: 2px solid var(--amber); outline-offset: 1px; }
 
 /* Switches: the checkboxes of the transport and the settings */
@@ -122,8 +142,8 @@ input[type=range]::-moz-range-thumb { width: 18px; height: 18px; border: 0; bord
 .legend { display: flex; gap: 14px; font-size: 12px; color: var(--muted); }
 .legend span { display: flex; align-items: center; gap: 6px; }
 .swatch { display: inline-block; width: 10px; height: 16px; border-radius: 3px; }
-.swatch.press { background: linear-gradient(var(--text) 0 0) bottom / 100% 6px no-repeat, rgba(242, 236, 228, .2); box-shadow: inset 0 0 0 1.5px rgba(242, 236, 228, .7); }
-.swatch.hold { background: rgba(242, 236, 228, .2); box-shadow: inset 0 0 0 1.5px rgba(242, 236, 228, .7); }
+.swatch.press { background: linear-gradient(var(--text) 0 0) bottom / 100% 6px no-repeat, color-mix(in srgb, var(--text) 20%, transparent); box-shadow: inset 0 0 0 1.5px color-mix(in srgb, var(--text) 70%, transparent); }
+.swatch.hold { background: color-mix(in srgb, var(--text) 20%, transparent); box-shadow: inset 0 0 0 1.5px color-mix(in srgb, var(--text) 70%, transparent); }
 
 footer { padding: 14px 16px 20px; text-align: center; font-size: 12px; color: var(--muted); }
 footer a { color: var(--text); text-underline-offset: 3px; }
@@ -133,15 +153,15 @@ dialog {
   color: var(--text); background: var(--panel); border: 1px solid var(--line-strong); border-radius: 18px;
   padding: 28px; max-width: 680px; width: calc(100% - 32px); max-height: 90vh; overflow: auto; box-shadow: 0 24px 80px rgba(0, 0, 0, .5);
 }
-dialog::backdrop { background: rgba(10, 8, 16, .7); }
+dialog::backdrop { background: var(--scrim); }
 dialog h2 { margin: 0 0 12px; font-size: 24px; line-height: 1.3; }
 #riskNotice { position: fixed; inset: 0; margin: auto; height: fit-content; z-index: 10; }
-#riskNotice p, #riskNotice li { font-size: 14px; line-height: 1.6; color: #cfc8dd; }
+#riskNotice p, #riskNotice li { font-size: 14px; line-height: 1.6; color: color-mix(in srgb, var(--text) 85%, var(--panel)); }
 #riskNotice ul { padding-left: 21px; }
 #riskNotice li { margin-bottom: 10px; }
 #riskNotice .check { align-items: flex-start; font-size: 14px; line-height: 1.5; color: var(--text); }
 #riskNotice .check input { width: 18px; height: 18px; margin: 2px 0 0; accent-color: var(--amber); flex-shrink: 0; }
-.eyebrow { margin: 0 0 6px; font-size: 14px; color: var(--amber); }
+.eyebrow { margin: 0 0 6px; font-size: 14px; color: var(--amber-text); }
 .noticeActions { display: flex; justify-content: flex-end; gap: 12px; margin-top: 20px; }
 
 .settingsHeader { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
@@ -156,7 +176,7 @@ dialog.sheet[open] { display: flex; flex-direction: column; }
 .sheet > .settingsFooter { flex-shrink: 0; margin: 0; padding: 14px 28px; border-top: 1px solid var(--line); }
 .settingsBody section { padding: 18px 0; border-bottom: 1px solid var(--line); }
 .settingsBody section:last-child { border-bottom: 0; }
-.settingsBody h3 { margin: 0 0 10px; font-size: 16px; font-weight: 600; color: var(--amber); }
+.settingsBody h3 { margin: 0 0 10px; font-size: 16px; font-weight: 600; color: var(--amber-text); }
 .settingsBody p { margin: 6px 0; }
 .settingsBody label { display: block; margin: 14px 0 6px; font-size: 14px; }
 .settingsBody label.check { display: flex; margin: 14px 0 4px; font-size: 15px; }
@@ -175,8 +195,8 @@ dialog.sheet.left { inset: 0 auto 0 0; border-left: 0; border-right: 1px solid v
 .songRow { flex: 1; min-width: 0; flex-direction: column; align-items: flex-start; gap: 2px; min-height: 64px; padding: 8px 10px; border-radius: 10px; background: transparent; text-align: left; white-space: normal; }
 .songRow:hover { background: var(--raised); }
 .songRow strong { font-size: 16px; font-weight: 600; }
-.songRow[aria-current="true"] strong { color: var(--amber); }
-#dropHint { position: fixed; inset: 12px; z-index: 20; display: flex; align-items: center; justify-content: center; border: 3px dashed var(--amber); border-radius: 18px; background: rgba(10, 8, 16, .8); pointer-events: none; }
+.songRow[aria-current="true"] strong { color: var(--amber-text); }
+#dropHint { position: fixed; inset: 12px; z-index: 20; display: flex; align-items: center; justify-content: center; border: 3px dashed var(--amber); border-radius: 18px; background: color-mix(in srgb, var(--night) 88%, transparent); pointer-events: none; }
 #dropHint[hidden] { display: none; }
 #dropHint p { font-size: 26px; font-weight: 600; }
 #pianoDialog #connection { margin: 18px 0 8px; font-size: 14px; }

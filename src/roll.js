@@ -2,6 +2,7 @@ import {upcoming, noteName, barAt} from './midi.js';
 import {$, TRACK_COLORS} from './dom.js';
 import {state} from './state.js';
 import {fitEnabled} from './arrange.js';
+import {isLight} from './theme.js';
 
 // Canvas piano roll: notes fall towards an on-screen keyboard.
 //
@@ -16,11 +17,19 @@ const HEAD = 12;            // px, solid head of a falling note
 const STRIKE_WINDOW = .15;  // s at 100 % speed: how long a key reads "press now" in normal playback
 const BEAM = .5;            // share of the roll's height a beam of light climbs
 const FONT = '"Instrument Sans", system-ui, sans-serif';
-const COLORS = {
+// The canvas's colours in each theme (theme.js). Light comes from adding light on the dark roll, and from darkening
+// (multiply) on the white one. `mixed`/`mixedInk`: the label of keys to play from both hands, and its text.
+const DARK = {
   lane: '#1b1626', octave: '#2a2338', bar: '#3a3150', barLabel: '#9890ab', hit: '#f2ece4', bed: '#0f0c16',
   white: '#ece6dc', black: '#241e2e', cLabel: '#5e5770', ink: '#1b1626', idle: '#ffffff', wrong: '#ff6b5e',
+  right: '#ffb547', left: '#5ed4e6', mixed: '#f2ece4', mixedInk: '#1b1626', glow: 'lighter', flare: 'rgba(255,255,255,.85)',
 };
-const HAND_COLORS = {right: '#ffb547', left: '#5ed4e6'};
+const LIGHT = {
+  lane: '#ffffff', octave: '#e6e2ee', bar: '#d3cde2', barLabel: '#5f5873', hit: '#1d1828', bed: '#cfc9db',
+  white: '#ffffff', black: '#2a2436', cLabel: '#6a6380', ink: '#1b1626', idle: '#9d93bd', wrong: '#e5483a',
+  right: '#d48000', left: '#1597ae', mixed: '#1d1828', mixedInk: '#ffffff', glow: 'multiply', flare: 'rgba(29,24,40,.7)',
+};
+let COLORS = DARK; // the theme's, chosen at each frame
 const isBlack = p => [1, 3, 6, 8, 10].includes(p % 12);
 const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
 
@@ -30,7 +39,7 @@ const mix = (from, to, amount) => {
   const a = rgb(from), b = rgb(to);
   return `rgb(${a.map((v, i) => Math.round(v + (b[i] - v) * amount)).join(',')})`;
 };
-const noteColor = n => HAND_COLORS[n.hand] ?? TRACK_COLORS[n.track % TRACK_COLORS.length];
+const noteColor = n => ({right: COLORS.right, left: COLORS.left})[n.hand] ?? TRACK_COLORS[n.track % TRACK_COLORS.length];
 
 // Pitches shown: the player's keyboard when the song is fitted to it; otherwise at least C3–B5, widened to every
 // note of the selected tracks. Always starts and ends on white keys.
@@ -92,8 +101,8 @@ function label(text, x, y, size, color, weight = 700) {
 function drawCoach(keys, geometry, colorOf, line, width) {
   const shown = keys.filter(p => geometry.has(p)).sort((a, b) => a - b);
   if (!shown.length) return;
-  const colors = new Set(shown.map(p => colorOf.get(p) ?? COLORS.hit));
-  const color = colors.size === 1 ? [...colors][0] : COLORS.hit;
+  const colors = new Set(shown.map(p => colorOf.get(p) ?? COLORS.mixed));
+  const color = colors.size === 1 ? [...colors][0] : COLORS.mixed;
   const text = `Play ${shown.map(noteName).join(' ')}`;
   ctx.font = `700 17px ${FONT}`;
   ctx.fontStretch = 'normal';
@@ -104,7 +113,7 @@ function drawCoach(keys, geometry, colorOf, line, width) {
   ctx.fillStyle = color;
   roundRect(x, y, pillWidth, pillHeight, pillHeight / 2);
   ctx.fill();
-  ctx.fillStyle = COLORS.ink;
+  ctx.fillStyle = color === COLORS.mixed ? COLORS.mixedInk : COLORS.ink;
   ctx.textAlign = 'left';
   ctx.textBaseline = 'middle';
   ctx.fillText(text, x + 16, y + pillHeight / 2 + 1);
@@ -118,6 +127,7 @@ export function drawRoll(time, sounding, pressed) {
     canvas.height = Math.round(rect.height * dpr);
   }
   ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  COLORS = isLight() ? LIGHT : DARK;
   const w = rect.width, h = rect.height, ahead = Number($('ahead').value);
   const keyHeight = Math.round(Math.min(140, Math.max(84, h * .18))), line = h - keyHeight;
   const {song, selected, playing, practice} = state;
@@ -218,7 +228,7 @@ export function drawRoll(time, sounding, pressed) {
   // Beams of light from the keys you press: the hand's colour, coral for a key not in the music, white when stopped
   const pressedColor = p => !playing ? COLORS.idle : sounding.has(p) || strike.has(p) ? colorOf.get(p) ?? COLORS.idle : COLORS.wrong;
   ctx.save();
-  ctx.globalCompositeOperation = 'lighter';
+  ctx.globalCompositeOperation = COLORS.glow;
   for (const p of pressed) {
     const g = geometry.get(p);
     if (!g) continue;
@@ -265,14 +275,14 @@ export function drawRoll(time, sounding, pressed) {
   }
 
   // The hit line, with a flare over each key you press
-  ctx.fillStyle = waiting ? HAND_COLORS.right : alpha(COLORS.hit, .75);
+  ctx.fillStyle = waiting ? COLORS.right : alpha(COLORS.hit, .75);
   ctx.fillRect(0, line - 3, w, 3);
   ctx.save();
-  ctx.globalCompositeOperation = 'lighter';
+  ctx.globalCompositeOperation = COLORS.glow;
   for (const p of pressed) {
     const g = geometry.get(p);
     if (!g) continue;
-    ctx.fillStyle = 'rgba(255,255,255,.85)';
+    ctx.fillStyle = COLORS.flare;
     ctx.fillRect(g.x - 2, line - 3, g.width + 4, 3);
   }
   ctx.restore();
