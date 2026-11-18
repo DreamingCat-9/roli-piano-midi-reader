@@ -5,6 +5,7 @@ import {state} from './state.js';
 import {startLiveVoice, stopVoice, clearLiveVoices} from './audio.js';
 import {current, seekTo, pressPracticeNote} from './transport.js';
 import {keyboardNote} from './keyboard.js';
+import {relightAfterRelease} from './keyLights.js';
 
 // What the player does on the keyboard: notes, sustain pedal and the Piano's arrow buttons.
 const SYSEX = 0xf0, CONTROL_CHANGE = 0xb0;
@@ -36,6 +37,7 @@ export function receiveMidi(event) {
     startLiveVoice(key, n.pitch, n.velocity);
     if (!keyboardNote(n.pitch)) pressPracticeNote(n.pitch);
   } else {
+    relightAfterRelease(n.pitch);
     const note = held.get(key);
     if (note && pedal.has(n.channel)) note.down = false;
     else { held.delete(key); stopVoice(key); }

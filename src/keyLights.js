@@ -37,6 +37,19 @@ export function scheduleLights(time, until) {
   scheduledTo = until;
 }
 
+// The Piano switches a key's light off when the key is released, even while the song still lights it.
+// So a released key that should be lit is lit again, shortly after the Piano has switched it off.
+const RELIGHT_DELAY = 30; // ms
+export function relightAfterRelease(pitch) {
+  const {output} = state, since = lit.get(pitch);
+  if (!output || since === undefined || since > now()) return;
+  try {
+    output.send([0x90, pitch, 127], now() + RELIGHT_DELAY);
+  } catch (e) {
+    status(`MIDI connection lost: ${e.message}`);
+  }
+}
+
 // Schedules again from song time `position`, including notes that start exactly there.
 export function restartLights(position) {
   scheduledTo = position - 0.000001;
