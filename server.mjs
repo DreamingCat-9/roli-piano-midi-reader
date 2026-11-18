@@ -1,7 +1,10 @@
 import http from 'node:http';
 import {readFile} from 'node:fs/promises';
+import {readdirSync} from 'node:fs';
 import {fileURLToPath} from 'node:url';
-const files={'/favicon.svg':'favicon.svg','/':'index.html','/app.js':'app.js','/midi.js':'midi.js','/piano.js':'piano.js','/lights.js':'lights.js','/buttons.js':'buttons.js','/practice.js':'practice.js','/style.css':'style.css'};
+const files={'/favicon.svg':'favicon.svg','/':'index.html','/style.css':'style.css'};
+// Only the browser modules present in src/ at startup are served.
+for(const name of readdirSync(new URL('src/',import.meta.url)))if(name.endsWith('.js'))files[`/src/${name}`]=`src/${name}`;
 for(const name of ['acoustic_grand_piano','electric_piano_1','drawbar_organ','music_box','xylophone'])files[`/samples/${name}.json`]=`samples/${name}.json`;
 const port=Number(process.env.PORT||8765);
 const host=process.env.PORT?'0.0.0.0':'127.0.0.1';

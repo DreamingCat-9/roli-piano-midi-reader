@@ -14,4 +14,4 @@ jobs:
         with:
           node-version: '24'
       - run: npm test
-      - run: node --check app.js && node --check server.mjs && node --check piano.js && node --check lights.js
+      - run: for file in src/*.js server.mjs; do node --check "$file"; done

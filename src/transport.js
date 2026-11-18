@@ -1,0 +1,108 @@
+import {Practice} from './practice.js';
+import {setBrightness} from './lights.js';
+import {$, status} from './dom.js';
+import {state, now} from './state.js';
+import {enableAudio, audioEnabled, silenceSong} from './audio.js';
+import {scheduleLights, restartLights, silenceLights} from './keyLights.js';
+import {updateButtonApi} from './pianoButtons.js';
+
+const NOTE_NAMES = ['C', 'C♯', 'D', 'D♯', 'E', 'F', 'F♯', 'G', 'G♯', 'A', 'A♯', 'B'];
+const LOOKAHEAD = 0.12; // seconds of song sent to the Piano ahead of time, at 100 % speed
+
+// Current song time. While practising it stops at the chord the player still has to play.
+export function current() {
+  const {playing, song, practice, position, origin, rate} = state;
+  if (!playing) return position;
+  return Math.min(song.duration, practice?.next?.time ?? Infinity, position + (now() - origin) / 1000 * rate);
+}
+
+const setPlayLabel = () => { $('play').textContent = state.playing ? 'Ⅱ Pause' : '▶ Play'; };
+
+function silence() {
+  silenceLights();
+  silenceSong();
+}
+
+// Clears lights and audio, then resumes scheduling (and practice) from the current position.
+function restartFromPosition() {
+  silence();
+  state.practice = $('stepMode').checked ? new Practice(state.song.notes, state.selected, state.position) : null;
+  restartLights(state.position);
+}
+
+export function pause() {
+  state.position = current();
+  state.playing = false;
+  state.practice = null;
+  silence();
+  setPlayLabel();
+}
+
+export async function play() {
+  if (state.playing) { pause(); return; }
+  const {song} = state;
+  if (!song.notes.length) { status('This file has no notes to play.'); return; }
+  if (state.position >= song.duration) state.position = 0;
+  if (audioEnabled()) await enableAudio();
+  const {output, midi} = state;
+  if (output && midi?.sysexEnabled) await setBrightness(output, state.originalBrightness.get(output.id) ?? 100);
+  state.origin = now();
+  state.playing = true;
+  restartFromPosition();
+  setPlayLabel();
+}
+
+export function seekTo(time) {
+  const resume = state.playing;
+  state.position = Math.max(0, Math.min(state.song.duration, time));
+  state.origin = now();
+  state.playing = resume && state.position < state.song.duration;
+  restartFromPosition();
+  $('seek').value = state.position;
+  setPlayLabel();
+  updateButtonApi();
+  if (state.playing) tick();
+}
+
+export function showRequired() {
+  const {practice} = state;
+  if (!practice?.waiting) return;
+  const names = [...practice.missing].map(p => NOTE_NAMES[p % 12] + (Math.floor(p / 12) - 1));
+  status(`Waiting for: ${names.join(', ')}. Play these notes on your keyboard.`);
+}
+
+// A key played on the keyboard. While practice waits, it counts towards the chord to play.
+export function pressPracticeNote(pitch) {
+  const {practice} = state;
+  if (!state.playing || !practice?.waiting) return;
+  const frozen = current();
+  if (practice.press(pitch)) {
+    state.position = frozen;
+    state.origin = now();
+    status('Correct. Continue to the next notes.');
+  } else showRequired();
+}
+
+// Runs every 25 ms: sends upcoming key lights, stops practice without a keyboard, and ends the song.
+export function tick() {
+  if (!state.playing) return;
+  const {song, practice, rate} = state;
+  if (practice && !state.input) {
+    pause();
+    status('Keyboard input disconnected. Reconnect it to continue practice.');
+    return;
+  }
+  const time = current();
+  const until = Math.min(song.duration, practice?.next?.time ?? Infinity, time + LOOKAHEAD * rate);
+  if (practice?.arrive(time)) showRequired();
+  try {
+    scheduleLights(time, until);
+  } catch (e) {
+    pause();
+    status(`Could not send MIDI: ${e.message}`);
+  }
+  if (time >= song.duration && !state.practice?.waiting) {
+    pause();
+    state.position = song.duration;
+  }
+}

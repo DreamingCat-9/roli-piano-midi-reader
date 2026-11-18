@@ -27,6 +27,10 @@ npm start
 
 Open http://localhost:8765. Run `npm test` to check MIDI parsing and lighting messages.
 
+## Code layout
+
+The player is plain ES modules in `src/`, with no build step. `src/app.js` is the entry point and lists what each module does. `midi.js`, `piano.js`, `lights.js`, `buttons.js` and `practice.js` hold the logic that does not touch the page; `test.mjs` covers them.
+
 ## Deploy
 
 Push to `main` on this GitHub repo to deploy automatically to Heroku. GitHub Actions runs tests on pushes and pull requests.
