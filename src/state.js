@@ -14,6 +14,7 @@ export const state = {
   origin: 0,                     // now() (ms) when `position` was last anchored
   rate: 1,                       // playback speed, 1 = 100 %
   practice: null,                // Practice while "Wait for me" is on
+  score: null,                   // Score of the run being played (score.js), reported at the song's end
 
   // Devices
   midi: null,                    // MIDIAccess

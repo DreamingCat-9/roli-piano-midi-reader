@@ -31,6 +31,7 @@ export function arrange() {
   // Notes still sounding once their hand has moved out of reach are let go: lit and shown as held only until then
   state.song = {...sourceSong, notes: holdTimes(notes.filter(isPractised), selected)};
   state.accompaniment = notes.filter(n => !isPractised(n));
+  state.score = null; // scored notes changed: the next Play starts a new run
   return fit ? describeFit(fit) : '';
 }
 

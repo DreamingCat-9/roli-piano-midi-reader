@@ -58,6 +58,16 @@
 <ul id="songList" class="songList"></ul>
 </div></dialog>
 <div id="dropHint" hidden><p>Drop the MIDI file to play it</p></div>
+<dialog id="reportDialog" aria-labelledby="reportTitle"><div class="settingsHeader"><h2 id="reportTitle">Song</h2><button id="closeReport" type="button" class="icon" aria-label="Close the report">✕</button></div>
+<p id="reportContext" class="muted"></p>
+<p id="reportResult" class="reportResult"></p>
+<p id="reportRule" class="muted"></p>
+<div id="reportFacts" class="reportFacts"></div>
+<section class="reportBars"><div class="reportBarsHead"><h3>Bar by bar</h3><div class="reportLegend" aria-hidden="true"><span><i class="good"></i>90% or more</span><span><i class="fair"></i>70 to 89%</span><span><i class="weak"></i>Under 70%</span></div></div>
+<div class="reportScroll"><div id="reportChart" class="reportChart" role="img"></div></div>
+<p id="reportHint" class="muted"></p></section>
+<div class="noticeActions"><button id="doneReport" type="button" class="ghost">Close</button><button id="replay" type="button">Play again</button><button id="practiseHard" type="button" class="primary">Practise the hard bars</button></div>
+</dialog>
 <dialog id="pianoDialog" class="sheet" aria-labelledby="pianoTitle"><div class="settingsHeader"><h2 id="pianoTitle">Your Piano</h2><button id="closePiano" type="button" class="icon" aria-label="Close">✕</button></div><div class="settingsBody">
 <p id="connection" class="muted" role="status">Click Connect ROLI Piano and allow MIDI access.</p>
 <button id="connect" type="button" class="primary">Connect ROLI Piano</button>

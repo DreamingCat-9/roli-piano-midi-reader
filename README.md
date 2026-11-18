@@ -14,7 +14,7 @@ Based on [ROLILearn4All](https://github.com/ClockworkPirate/ROLILearn4All) by Cl
 2. Accept the notice and allow MIDI/SysEx access when Chrome asks (only the first time). The Piano links by itself, now and whenever it is plugged in again; the Piano button in the top bar shows whether it is linked and opens **Your Piano**, where **Connect ROLI Piano** does the same by hand.
 3. Load a `.mid` file and press **Play**, or try the demo.
 
-**Songs** (top left) lists the MIDI files you have opened: they are kept in this browser with where you stopped, and the last one opens by itself next time, paused there. You can also drop a `.mid` file anywhere on the page. The notes fall past numbered bar lines, and **Loop** (the arrows beside the time) plays four bars again and again; the bar numbers beside it change which bars.
+**Songs** (top left) lists the MIDI files you have opened: they are kept in this browser with where you stopped, and the last one opens by itself next time, paused there. You can also drop a `.mid` file anywhere on the page. The notes fall past numbered bar lines, and **Loop** (the arrows beside the time) plays four bars again and again; the bar numbers beside it change which bars. When you play a song to its end on your keyboard, a report shows how many notes you played on time, your wrong notes and, bar by bar, where it went less well, with a button to loop those bars at a slower speed.
 
 Notes and keys take the colour of the hand that plays them: amber for the right hand, cyan for the left. The bar under the notes chooses the hand to practise, turns **Wait for me** on and sets the speed; Settings holds the rest (tracks, your keys, the Piano's lights, sound and display). Piano audio is on by default and also responds to your keyboard, including velocity and sustain. **Disconnect and clear lights**, in Your Piano, sends note releases and turns off key lighting; reconnecting restores brightness.
 
@@ -32,7 +32,7 @@ Open http://localhost:8765. Run `npm test` to check MIDI parsing and lighting me
 
 ## Code layout
 
-The player is plain ES modules in `src/`, with no build step. `src/app.js` is the entry point and lists what each module does. `midi.js` (including bars and loops), `piano.js`, `lights.js`, `buttons.js`, `practice.js`, `hands.js` and `fit.js` hold the logic that does not touch the page; `test.mjs` covers them. `scripts/stamp-version.mjs` gives the published files versioned URLs when GitHub Pages deploys them.
+The player is plain ES modules in `src/`, with no build step. `src/app.js` is the entry point and lists what each module does. `midi.js` (including bars and loops), `piano.js`, `lights.js`, `buttons.js`, `practice.js`, `score.js`, `hands.js` and `fit.js` hold the logic that does not touch the page; `test.mjs` covers them. `scripts/stamp-version.mjs` gives the published files versioned URLs when GitHub Pages deploys them.
 
 ## Deploy
 

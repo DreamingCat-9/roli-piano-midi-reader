@@ -1,5 +1,6 @@
-// "Wait for my notes": the song stops at each chord (notes starting together) until every one of its keys is played.
+// "Wait for me": the song stops at each chord (notes starting together) until every one of its keys is played.
 // A key played a little before its chord arrives counts for it, so arriving there does not wait for it again.
+// `onChord(group, early)`, when set, hears of each chord done: played while waiting, or entirely early.
 export class Practice {
   constructor(notes, selected, time = 0) {
     this.groups = [];
@@ -15,6 +16,7 @@ export class Practice {
     this.index = 0;
     this.waiting = false;
     this.missing = new Set();
+    this.onChord = null;
   }
 
   get next() { return this.groups[this.index]; }
@@ -25,7 +27,10 @@ export class Practice {
     while (this.next && time >= this.next.time && !this.waiting) {
       this.missing = new Set([...this.next.pitches].filter(p => !this.next.early.has(p)));
       if (this.missing.size) this.waiting = true;
-      else this.index++;
+      else {
+        const done = this.groups[this.index++];
+        this.onChord?.(done, true);
+      }
     }
     return this.waiting;
   }
@@ -35,8 +40,9 @@ export class Practice {
     if (!this.waiting || !this.missing.has(pitch)) return false;
     this.missing.delete(pitch);
     if (this.missing.size) return false;
-    this.index++;
     this.waiting = false;
+    const done = this.groups[this.index++];
+    this.onChord?.(done, false);
     return true;
   }
 

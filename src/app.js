@@ -10,6 +10,7 @@
 //   song.js         loading a song (or the demo), track list
 //   library.js      your songs, kept in this browser: open, remove, resume where you stopped, drop a file
 //   loop.js         looping a range of bars
+//   report.js       the end-of-song report (numbers from score.js)
 //   keyboard.js     the player's key range
 //   arrange.js      what is played: the practised hand (hands.js), fitted to the keys (fit.js)
 //   roll.js         canvas piano roll
@@ -24,6 +25,7 @@ import {state} from './state.js';
 import {initNotice} from './notice.js';
 import {initSettings} from './settings.js';
 import {initLoop} from './loop.js';
+import {initReport} from './report.js';
 import {initLibrary} from './library.js';
 import {initKeyboard} from './keyboard.js';
 import {initDevice, autoConnect} from './device.js';
@@ -48,6 +50,7 @@ initKeyboard();
 initDevice();
 initControls();
 initLoop();
+initReport();
 setInterval(updateButtonApi, 1000);
 setInterval(tick, 25);
 initLibrary(); // the demo, then the last song played, where it was left
