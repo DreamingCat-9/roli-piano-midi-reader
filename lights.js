@@ -14,6 +14,18 @@ export async function readBrightness(port,input){
  let bits=0n;payload.forEach((b,i)=>bits|=BigInt(b)<<BigInt(i*7));let pos=32;const read=n=>{const v=Number((bits>>BigInt(pos))&((1n<<BigInt(n))-1n));pos+=n;return v;};while(pos+7<=payload.length*7){const type=read(7);if(type!==24)return;const cmd=read(4);if(cmd!==0&&cmd!==4)return;if(pos+40>payload.length*7)return;const item=read(8),value=read(32);if(item===36){finish(value);return;}if(cmd===4)pos+=64;}
  };input.addEventListener('midimessage',handler);timer=setTimeout(()=>finish(null),1000);try{port.send(configPacket(36,0,true));}catch{finish(null);}});
 }
+// Note messages that move the key lights from `lit` (pitch → time its light came on) to the pitches in `next` at `at` ms.
+// A lit key that is struck again is switched off up to `gap` ms early, so a repeated note shows as a new strike.
+export function lightChanges(lit,next,at,struck=new Set(),gap=60){
+ const messages=[],now=new Map();
+ for(const p of lit.keys())if(!next.has(p))messages.push({data:[0x80,p,0],at});
+ for(const p of next){
+  if(!lit.has(p)){messages.push({data:[0x90,p,127],at});now.set(p,at);}
+  else if(struck.has(p)){messages.push({data:[0x80,p,0],at:Math.min(at,Math.max(lit.get(p)+1,at-gap))},{data:[0x90,p,127],at});now.set(p,at);}
+  else now.set(p,lit.get(p));
+ }
+ return {messages,lit:now};
+}
 export async function setBrightness(port,value){port.send(configPacket(36,value));await new Promise(resolve=>setTimeout(resolve,150));}
 export async function resetLights(port,wait=ms=>new Promise(resolve=>setTimeout(resolve,ms)),clock=()=>performance.now()){
  if(!port)return;
