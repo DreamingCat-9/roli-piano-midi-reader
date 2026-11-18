@@ -69,10 +69,12 @@ export function initControls() {
   document.addEventListener('pointerdown', () => {
     enableAudio().catch(e => status(`Audio unavailable: ${e.message}`));
   });
-  // Playback pauses in background tabs, where timers are throttled.
+  // Playback pauses in background tabs, where timers are throttled. "Wait for my notes" keeps waiting:
+  // the player watches the Piano, and Chrome on Windows also reports a window covered by another one as hidden.
   document.addEventListener('visibilitychange', () => {
-    if (document.hidden) clearLive();
-    if (document.hidden && state.playing) {
+    if (!document.hidden || state.practice) return;
+    clearLive();
+    if (state.playing) {
       pause();
       status('Paused while the tab is hidden. Press Play to continue.');
     }

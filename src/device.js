@@ -6,8 +6,11 @@ import {receiveMidi, clearLive} from './live.js';
 
 // Web MIDI access and the choice of Piano output (lights) and keyboard input.
 
+// Ports being opened. Opening a port fires a state change, and the refresh it triggers must keep them selected.
+const opening = {output: null, input: null};
+
 function refreshOutputs() {
-  const previous = state.output?.id;
+  const previous = state.output?.id ?? opening.output;
   const available = [...state.midi.outputs.values()].filter(p => p.state === 'connected');
   const select = $('output');
   select.replaceChildren();
@@ -28,7 +31,7 @@ function refreshOutputs() {
 }
 
 function refreshInputs() {
-  const previous = state.input?.id;
+  const previous = state.input?.id ?? opening.input;
   const available = [...state.midi.inputs.values()].filter(p => p.state === 'connected');
   const select = $('input');
   select.replaceChildren();
@@ -57,6 +60,7 @@ async function chooseInput() {
   state.input = null;
   const candidate = state.midi?.inputs.get($('input').value);
   if (!candidate) return;
+  opening.input = candidate.id;
   try {
     await candidate.open();
     state.input = candidate;
@@ -64,6 +68,8 @@ async function chooseInput() {
     status(`Keyboard audio ready: ${candidate.name}. Play a key to hear it.`);
   } catch (e) {
     status(`Could not open MIDI input: ${e.message}`);
+  } finally {
+    if (opening.input === candidate.id) opening.input = null;
   }
 }
 
@@ -73,6 +79,7 @@ async function chooseOutput() {
   state.output = null;
   const candidate = state.midi?.outputs.get($('output').value);
   if (!candidate) return;
+  opening.output = candidate.id;
   try {
     await candidate.open();
     state.output = candidate;
@@ -90,6 +97,8 @@ async function chooseOutput() {
     status('Piano ready. Press Play to light the keys.');
   } catch (e) {
     status(`Could not open MIDI output: ${e.message}`);
+  } finally {
+    if (opening.output === candidate.id) opening.output = null;
   }
 }
 

@@ -74,12 +74,16 @@ export function showRequired() {
 // A key played on the keyboard. While practice waits, it counts towards the chord to play.
 export function pressPracticeNote(pitch) {
   const {practice} = state;
-  if (!state.playing || !practice?.waiting) return;
+  if (!state.playing || !practice) return;
+  // The timer may not have noticed the chord yet (it fires at most once a second on a hidden page).
+  practice.arrive(current());
+  if (!practice.waiting) return;
   const frozen = current();
   if (practice.press(pitch)) {
     state.position = frozen;
     state.origin = now();
     status('Correct. Continue to the next notes.');
+    tick(); // light what comes next now instead of on the next timer tick
   } else showRequired();
 }
 
@@ -93,7 +97,9 @@ export function tick() {
     return;
   }
   const time = current();
-  const until = Math.min(song.duration, practice?.next?.time ?? Infinity, time + LOOKAHEAD * rate);
+  // A hidden page only gets about one timer tick per second, so practice then sends every light up to the next chord.
+  const lookahead = practice && document.hidden ? Infinity : LOOKAHEAD * rate;
+  const until = Math.min(song.duration, practice?.next?.time ?? Infinity, time + lookahead);
   if (practice?.arrive(time)) showRequired();
   try {
     scheduleLights(time, until);
