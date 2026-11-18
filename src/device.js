@@ -1,8 +1,9 @@
 import {readBrightness, setBrightness, resetLights} from './lights.js';
-import {$, status} from './dom.js';
+import {$, status, closeOnBackdropClick} from './dom.js';
 import {state} from './state.js';
 import {pause} from './transport.js';
 import {receiveMidi, clearLive} from './live.js';
+import {showPianoStatus} from './pianoStatus.js';
 
 // Web MIDI access and the choice of Piano output (lights) and keyboard input.
 
@@ -68,6 +69,7 @@ const refreshPorts = () => {
   refreshOutputs();
   refreshInputs();
   linkPiano();
+  showPianoStatus();
 };
 
 async function chooseInput() {
@@ -116,6 +118,7 @@ async function chooseOutput() {
     status(`Could not open MIDI output: ${e.message}`);
   } finally {
     if (opening.output === candidate.id) opening.output = null;
+    showPianoStatus();
   }
 }
 
@@ -143,6 +146,7 @@ async function connect() {
   } finally {
     button.disabled = false;
     button.textContent = state.midi ? 'Refresh MIDI devices' : 'Connect ROLI Piano';
+    showPianoStatus();
   }
 }
 
@@ -179,9 +183,10 @@ async function disconnect() {
     button.disabled = false;
     status(`Could not finish clearing lights: ${e.message}. Try Disconnect again.`);
   } finally {
-    button.textContent = 'Disconnect & clear lights';
+    button.textContent = 'Disconnect and clear lights';
     for (const id of controls) $(id).disabled = false;
     if (state.midi) state.midi.onstatechange = stateHandler;
+    showPianoStatus();
   }
 }
 
@@ -197,6 +202,11 @@ export async function autoConnect() {
 }
 
 export function initDevice() {
+  const dialog = $('pianoDialog');
+  $('pianoPill').onclick = () => { if (state.noticeAccepted) dialog.showModal(); };
+  $('closePiano').onclick = () => dialog.close();
+  closeOnBackdropClick(dialog);
+  showPianoStatus();
   $('connect').onclick = connect;
   $('output').onchange = () => {
     autoLink = Boolean($('output').value); // choosing no output stops linking the Piano by itself

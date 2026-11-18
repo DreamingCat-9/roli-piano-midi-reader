@@ -1,5 +1,5 @@
 import {parseMidi} from './midi.js';
-import {$, status, TRACK_COLORS} from './dom.js';
+import {$, status} from './dom.js';
 import {state} from './state.js';
 import {pause, play} from './transport.js';
 import {arrange} from './arrange.js';
@@ -32,7 +32,6 @@ export function loadSong(song, title) {
       if (resume) play();
     });
     label.append(box, document.createTextNode(track.name || `Track ${i + 1}`));
-    label.style.color = TRACK_COLORS[i % TRACK_COLORS.length];
     list.append(label);
   });
   status(`${song.notes.length} notes · ${song.tracks.length} tracks · Files stay on your computer.${fit ? ` ${fit}` : ''}`);

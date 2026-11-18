@@ -11,10 +11,10 @@ Based on [ROLILearn4All](https://github.com/ClockworkPirate/ROLILearn4All) by Cl
 ## Get started
 
 1. Open the player in desktop Chrome and connect your Piano by USB.
-2. Accept the notice and allow MIDI/SysEx access when Chrome asks (only the first time). The Piano links by itself, now and whenever it is plugged in again; **Connect ROLI Piano** does the same by hand.
+2. Accept the notice and allow MIDI/SysEx access when Chrome asks (only the first time). The Piano links by itself, now and whenever it is plugged in again; the Piano button in the top bar shows whether it is linked and opens **Your Piano**, where **Connect ROLI Piano** does the same by hand.
 3. Load a `.mid` file and press **Play**, or try the demo.
 
-Choose tracks, slow down playback, and adjust how far ahead you see notes. Piano audio is on by default and also responds to your keyboard, including velocity and sustain. **Disconnect & clear lights** sends note releases and turns off key lighting; reconnecting restores brightness.
+Notes and keys take the colour of the hand that plays them: amber for the right hand, cyan for the left. The bar under the notes chooses the hand to practise, turns **Wait for me** on and sets the speed; Settings holds the rest (tracks, your keys, the Piano's lights, sound and display). Piano audio is on by default and also responds to your keyboard, including velocity and sustain. **Disconnect and clear lights**, in Your Piano, sends note releases and turns off key lighting; reconnecting restores brightness.
 
 You may need ROLI's Windows driver. Close Ableton's ROLI control surface while using the player to avoid competing lighting commands. Only notes within your Piano's current octave range can light its keys.
 

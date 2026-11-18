@@ -9,7 +9,8 @@ import {pause, play} from './transport.js';
 // In state.song a note's `end` is when to let go; `ring`, when set, is the later written end it is heard until.
 
 export const fitEnabled = () => Boolean(state.keyboard) && $('fitSong').checked;
-export const practisedHand = () => $('hand').value; // 'both', 'right' or 'left'
+// 'both', 'right' or 'left', from the Hands choice in the transport bar
+export const practisedHand = () => document.querySelector('input[name="hand"]:checked')?.value ?? 'both';
 
 function describeFit({shift, folded}) {
   const parts = [];

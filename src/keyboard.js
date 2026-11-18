@@ -2,6 +2,7 @@ import {noteName} from './midi.js';
 import {$, status} from './dom.js';
 import {state} from './state.js';
 import {fitEnabled, rearrange} from './arrange.js';
+import {showPianoStatus} from './pianoStatus.js';
 
 // The player's keyboard: which pitches its keys play. Songs are fitted onto it by arrange.js.
 // The range is detected by pressing the leftmost and rightmost keys, and remembered in this browser.
@@ -13,6 +14,7 @@ const rangeText = ({low, high}) => `${noteName(low)} to ${noteName(high)} (${hig
 
 function showRange(text = state.keyboard ? `Your keys: ${rangeText(state.keyboard)}.` : 'Not detected yet.') {
   $('keyboardRange').textContent = text;
+  showPianoStatus();
 }
 
 function loadRange() {

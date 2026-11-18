@@ -5,7 +5,8 @@
 //   keyLights.js    schedules the song's key lights on the Piano
 //   audio.js        song and keyboard audio (samples via piano.js)
 //   live.js         keyboard input: notes, sustain, Piano arrow buttons
-//   device.js       Web MIDI access, output and input selection, disconnect
+//   device.js       Web MIDI access, output and input selection, disconnect (the Your Piano sheet)
+//   pianoStatus.js  the Piano pill in the top bar
 //   song.js         loading MIDI files and the demo, track list
 //   keyboard.js     the player's key range
 //   arrange.js      what is played: the practised hand (hands.js), fitted to the keys (fit.js)

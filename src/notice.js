@@ -21,7 +21,7 @@ export function initNotice(onAccept) {
     state.noticeAccepted = true;
     mainArea().inert = false;
     dialog.close();
-    $('connect').focus();
+    $('play').focus();
     onAccept?.();
   };
   $('riskLeave').onclick = () => location.replace('about:blank');

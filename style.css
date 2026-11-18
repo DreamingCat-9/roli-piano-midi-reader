@@ -1,11 +1,172 @@
-@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap');
-:root{color-scheme:dark;font-family:'DM Sans',system-ui,sans-serif;background:#101417;color:#f0f4f2}*{box-sizing:border-box}body{margin:0}header{height:78px;border-bottom:1px solid #293136;display:flex;align-items:center;justify-content:space-between;padding:0 5vw}.brand{display:flex;gap:12px;font-size:25px;color:#8dbdff}.brand span{font-size:20px;color:#eef3ef}.brand b{font-weight:400;color:#a3b3ac}.tag,.eyebrow{font-size:10px;letter-spacing:2px;color:#96a9a0}main{max-width:1500px;padding:38px 5vw;margin:auto}.intro{display:flex;justify-content:space-between;align-items:center;margin-bottom:30px}h1{font-size:46px;letter-spacing:-2px;margin:8px 0}p{line-height:1.6}.intro p:last-child{color:#a6b3ae;margin-bottom:0}h2{font-size:17px;margin:0 0 18px}.upload,button{background:#26302e;border:1px solid #40514a;color:#eff5f1;border-radius:9px;padding:12px 17px;cursor:pointer;font:inherit;font-size:13px}.upload{background:#8dbdff;color:#10291e;font-weight:700;border:0}.upload input{display:none}button:hover{filter:brightness(1.15)}button:disabled{opacity:.4;cursor:default}button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid #8dbdff;outline-offset:3px}.workspace{display:grid;grid-template-columns:250px 1fr;gap:22px}aside,.player{background:#192024;border:1px solid #303a3d;border-radius:14px}aside{padding:24px}aside button{width:100%;margin-bottom:12px}label{display:block;font-size:12px;color:#c5d2cc;margin:17px 0}select{width:100%;padding:10px;margin-top:8px;background:#101719;color:#e0eae4;border:1px solid #3d4945;border-radius:7px}input[type=range]{width:100%;accent-color:#8dbdff}.muted{color:#91a29a;font-size:12px}hr{border:0;border-top:1px solid #303b3a;margin:24px 0}.check{display:flex;gap:8px;align-items:center}.check input{accent-color:#8dbdff}#speedLabel{float:right}.player{overflow:hidden;min-width:0}.songbar{padding:20px 24px;display:flex;justify-content:space-between;align-items:center}.songbar h2{margin:0}.songbar .eyebrow{margin:0 0 7px}.roll{height:470px;background:#10171c;position:relative}canvas{width:100%;height:100%;display:block}.legend{display:flex;gap:14px;flex-shrink:0;font-size:11px;color:#b9c8c0}.legend span{display:flex;align-items:center;gap:6px}.swatch{display:inline-block;width:10px;height:16px;border-radius:3px}.swatch.press{background:linear-gradient(#e6edf0 0 0) bottom/100% 6px no-repeat,#e6edf03d;box-shadow:inset 0 0 0 1.5px #e6edf0b3}.swatch.hold{background:#e6edf03d;box-shadow:inset 0 0 0 1.5px #e6edf0b3}.swatch.you{background:linear-gradient(#ffffff00,#ffffffd9)}.transport{display:flex;align-items:center;gap:12px;padding:20px 24px 5px}.primary{background:#8dbdff;color:#10291e;font-weight:700;min-width:100px}#time{font-size:12px;white-space:nowrap;color:#a6b9ae}.transport input{flex:1;min-width:40px}#status{font-size:12px;color:#a4b5ac;padding:0 24px 12px;min-height:32px}footer{color:#71857a;font-size:11px;margin-top:24px;text-align:center}@media(max-width:800px){main{padding:24px 16px}.workspace{grid-template-columns:1fr}aside{display:grid;grid-template-columns:1fr 1fr;gap:12px}aside hr{display:none}.intro{gap:15px}h1{font-size:34px}.roll{height:400px}.transport{flex-wrap:wrap}.transport input{flex-basis:100%}.tag{display:none}}
-dialog{color:#edf4ef;background:#192024;border:1px solid #52695d;border-radius:16px;padding:28px;max-width:680px;width:calc(100% - 32px);max-height:90vh;overflow:auto;box-shadow:0 24px 90px #0008}.transport select{width:auto;margin:0;padding:11px 12px;font:inherit;font-size:13px;border-radius:9px}#riskNotice{position:fixed;inset:0;margin:auto;height:fit-content;z-index:10}dialog::backdrop{background:#060d10dd;backdrop-filter:blur(5px)}dialog h2{font-size:24px;line-height:1.3}dialog p,dialog li{font-size:13px;line-height:1.65;color:#becfc5}dialog ul{padding-left:21px}dialog li{margin-bottom:10px}dialog .check{align-items:flex-start;font-size:13px;line-height:1.5;color:#f0f4f2}dialog .check input{margin-top:4px;flex-shrink:0}.noticeActions{display:flex;justify-content:flex-end;gap:12px;margin-top:20px}
+@import url('https://fonts.googleapis.com/css2?family=Instrument+Sans:wdth,wght@75..100,400..700&display=swap');
 
-footer a{color:#8dbdff;text-underline-offset:3px}footer a:hover{color:#c8dfff}
-.panelActions{display:flex;gap:10px;align-items:center}.player:fullscreen{display:flex;flex-direction:column;width:100vw;height:100vh;border:0;border-radius:0;background:#192024;overflow:auto}.player:fullscreen .songbar{flex-shrink:0}.player:fullscreen .roll{flex:1;min-height:160px;height:auto}.player:fullscreen .transport{flex-shrink:0}.player:fullscreen #status{flex-shrink:0;margin:8px 0;padding-bottom:12px}@media(max-width:550px){.panelActions{gap:6px}.panelActions button{padding:10px 8px;font-size:11px}}
-.workspace{align-items:start}.settingsHeader{display:flex;align-items:center;justify-content:space-between;gap:16px}.settingsHeader h2{margin:0}.settingsHeader button{padding:8px 12px}.settingsBody>hr:first-child{display:none}.settingsBody h2{font-size:16px}.settingsFooter{display:flex;justify-content:flex-end;margin-top:24px}#settingsDialog{max-width:560px}.songbar{gap:16px}.panelActions{flex-wrap:wrap;justify-content:flex-end}@media(max-width:800px){aside{display:block}}@media(max-width:550px){.songbar{align-items:flex-start;flex-direction:column}.panelActions{justify-content:flex-start}}
-#instrumentDialog{max-width:420px}#openInstrument{display:inline-flex;align-items:center;gap:7px}#instrumentIcon{font-size:18px;line-height:1}
-#instrumentDialog{max-width:680px}.instrumentGrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-top:24px}.instrumentCard{min-height:170px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:22px 12px;background:#111b20;border:2px solid #35434a;text-align:center}.instrumentCardIcon{font-size:40px;line-height:1.2}.instrumentCard strong{font-size:15px}.instrumentCard>span:last-child{font-size:11px;color:#a9b9c5}.instrumentCard[aria-pressed="true"]{border-color:#8dbdff;background:#22364b;box-shadow:0 0 0 1px #8dbdff33}.instrumentCard:disabled{cursor:wait}@media(max-width:520px){.instrumentGrid{grid-template-columns:1fr}.instrumentCard{min-height:125px}}
-.panelActions .upload{margin:0;white-space:nowrap}.songbar{flex-wrap:wrap}.songbar>div:first-child{min-width:140px}.panelActions{flex:1}
-#settingsDialog{padding:0;overflow:hidden}#settingsDialog[open]{display:flex;flex-direction:column}#settingsDialog>.settingsHeader{flex-shrink:0;padding:22px 28px;background:#192024;border-bottom:1px solid #35434a;z-index:1}#settingsDialog>.settingsBody{min-height:0;overflow-y:auto;overscroll-behavior:contain;padding:8px 28px 20px}#settingsDialog>.settingsFooter{flex-shrink:0;margin:0;padding:16px 28px;border-top:1px solid #35434a;background:#192024}
+/* Colours: the screen is a stage at night, lit like the Piano. Amber is the right hand, cyan the left. */
+:root {
+  color-scheme: dark;
+  --night: #16121f;        /* page */
+  --lane: #1b1626;         /* the roll the notes fall down */
+  --panel: #1e1929;        /* dialogs and sheets */
+  --raised: #231d30;       /* buttons, controls */
+  --line: #2a2338;
+  --line-strong: #3a3150;
+  --selected: #3a3150;
+  --text: #f2ece4;         /* ivory */
+  --muted: #9890ab;
+  --amber: #ffb547;        /* right hand, main action */
+  --amber-ink: #3d2600;
+  --cyan: #5ed4e6;         /* left hand */
+  --coral: #ff6b5e;        /* wrong note */
+  --mint: #7be0a0;         /* linked, on */
+  font-family: 'Instrument Sans', system-ui, sans-serif;
+  background: var(--night);
+  color: var(--text);
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--night); }
+main { min-height: 100vh; display: flex; flex-direction: column; }
+p { line-height: 1.55; }
+.muted { color: var(--muted); font-size: 13px; }
+:focus-visible { outline: 2px solid var(--amber); outline-offset: 2px; }
+
+/* Buttons */
+button {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  min-height: 44px; padding: 0 16px; border: 0; border-radius: 999px;
+  background: var(--raised); color: var(--text); font: inherit; font-size: 14px; cursor: pointer; white-space: nowrap;
+}
+button:hover { background: var(--line-strong); }
+button:disabled { opacity: .45; cursor: default; }
+button svg { fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; flex-shrink: 0; }
+.primary { background: var(--amber); color: var(--amber-ink); font-weight: 600; }
+.primary:hover { background: #ffc46b; }
+.ghost { background: transparent; color: var(--muted); }
+.ghost:hover { background: var(--raised); color: var(--text); }
+.icon { width: 44px; padding: 0; border-radius: 10px; background: transparent; color: var(--muted); }
+.icon:hover { background: var(--raised); color: var(--text); }
+.dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+.dot.left { background: var(--cyan); }
+.dot.right { background: var(--amber); }
+
+/* The player fills the window: top bar, roll, transport, status */
+.player { height: 100vh; min-height: 560px; display: flex; flex-direction: column; background: var(--night); }
+.player:fullscreen { width: 100vw; height: 100vh; }
+.topbar { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 10px 16px; flex-wrap: wrap; }
+.song { display: flex; align-items: center; gap: 12px; min-width: 0; }
+.mark { color: var(--text); flex-shrink: 0; }
+#title { margin: 0; font-size: 22px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.topActions { display: flex; align-items: center; gap: 4px; flex-wrap: wrap; }
+#instrumentIcon { font-size: 17px; line-height: 1; }
+.pill { margin: 0 4px; }
+.pill .dot { background: var(--muted); }
+.pill.linked .dot { background: var(--mint); }
+#pianoRange:empty { display: none; }
+
+.roll { flex: 1; min-height: 260px; position: relative; background: var(--lane); }
+canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+
+.transport { display: flex; align-items: center; gap: 16px; padding: 12px 16px 6px; flex-wrap: wrap; }
+.playButton { width: 52px; height: 52px; padding: 0; border-radius: 50%; background: var(--text); color: var(--night); flex-shrink: 0; }
+.playButton:hover { background: #fff; }
+.playButton svg, #stop svg { fill: currentColor; stroke: none; }
+.playButton .pauseIcon, .playButton.playing .playIcon { display: none; }
+.playButton.playing .pauseIcon { display: block; }
+.progress { flex: 1 1 280px; min-width: 200px; display: flex; align-items: center; gap: 14px; }
+#seek { flex: 1; min-width: 0; }
+#time { font-size: 13px; color: var(--muted); font-variant-numeric: tabular-nums; white-space: nowrap; }
+
+input[type=range] { -webkit-appearance: none; appearance: none; height: 24px; margin: 0; background: transparent; cursor: pointer; }
+input[type=range]::-webkit-slider-runnable-track { height: 6px; border-radius: 3px; background: var(--line-strong); }
+input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; width: 18px; height: 18px; margin-top: -6px; border-radius: 50%; background: var(--text); }
+input[type=range]::-moz-range-track { height: 6px; border-radius: 3px; background: var(--line-strong); }
+input[type=range]::-moz-range-progress { height: 6px; border-radius: 3px; background: var(--text); }
+input[type=range]::-moz-range-thumb { width: 18px; height: 18px; border: 0; border-radius: 50%; background: var(--text); }
+
+/* Segmented choices (hands, speed): radio buttons drawn as one pill */
+.segmented { display: flex; margin: 0; padding: 3px; border: 0; border-radius: 999px; background: var(--raised); }
+.segmented label { position: relative; display: flex; }
+.segmented input { position: absolute; inset: 0; width: 100%; height: 100%; margin: 0; opacity: 0; cursor: pointer; }
+.segmented span { display: flex; align-items: center; gap: 7px; min-height: 38px; padding: 0 14px; border-radius: 999px; font-size: 14px; color: var(--muted); font-variant-numeric: tabular-nums; }
+.segmented label:hover span { color: var(--text); }
+.segmented input:checked + span { background: var(--selected); color: var(--text); }
+.segmented input:focus-visible + span { outline: 2px solid var(--amber); outline-offset: 1px; }
+
+/* Switches: the checkboxes of the transport and the settings */
+.switch, .check { display: flex; align-items: center; gap: 10px; cursor: pointer; }
+.switch { min-height: 44px; font-size: 15px; white-space: nowrap; }
+.switch input, .sheet .check input {
+  -webkit-appearance: none; appearance: none; flex-shrink: 0; width: 42px; height: 24px; margin: 0; border-radius: 999px; cursor: pointer;
+  background: radial-gradient(circle at 12px 50%, var(--text) 8px, transparent 8.5px) var(--line-strong);
+}
+.switch input:checked, .sheet .check input:checked { background: radial-gradient(circle at 30px 50%, var(--night) 8px, transparent 8.5px) var(--mint); }
+
+.statusbar { display: flex; align-items: center; justify-content: space-between; gap: 16px; min-height: 36px; padding: 0 16px 10px; flex-wrap: wrap; }
+#status { margin: 0; font-size: 13px; color: var(--muted); }
+.legend { display: flex; gap: 14px; font-size: 12px; color: var(--muted); }
+.legend span { display: flex; align-items: center; gap: 6px; }
+.swatch { display: inline-block; width: 10px; height: 16px; border-radius: 3px; }
+.swatch.press { background: linear-gradient(var(--text) 0 0) bottom / 100% 6px no-repeat, rgba(242, 236, 228, .2); box-shadow: inset 0 0 0 1.5px rgba(242, 236, 228, .7); }
+.swatch.hold { background: rgba(242, 236, 228, .2); box-shadow: inset 0 0 0 1.5px rgba(242, 236, 228, .7); }
+
+footer { padding: 14px 16px 20px; text-align: center; font-size: 12px; color: var(--muted); }
+footer a { color: var(--text); text-underline-offset: 3px; }
+
+/* Dialogs */
+dialog {
+  color: var(--text); background: var(--panel); border: 1px solid var(--line-strong); border-radius: 18px;
+  padding: 28px; max-width: 680px; width: calc(100% - 32px); max-height: 90vh; overflow: auto; box-shadow: 0 24px 80px rgba(0, 0, 0, .5);
+}
+dialog::backdrop { background: rgba(10, 8, 16, .7); }
+dialog h2 { margin: 0 0 12px; font-size: 24px; line-height: 1.3; }
+#riskNotice { position: fixed; inset: 0; margin: auto; height: fit-content; z-index: 10; }
+#riskNotice p, #riskNotice li { font-size: 14px; line-height: 1.6; color: #cfc8dd; }
+#riskNotice ul { padding-left: 21px; }
+#riskNotice li { margin-bottom: 10px; }
+#riskNotice .check { align-items: flex-start; font-size: 14px; line-height: 1.5; color: var(--text); }
+#riskNotice .check input { width: 18px; height: 18px; margin: 2px 0 0; accent-color: var(--amber); flex-shrink: 0; }
+.eyebrow { margin: 0 0 6px; font-size: 14px; color: var(--amber); }
+.noticeActions { display: flex; justify-content: flex-end; gap: 12px; margin-top: 20px; }
+
+.settingsHeader { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+.settingsHeader h2 { margin: 0; font-size: 22px; }
+.settingsFooter { display: flex; justify-content: flex-end; margin-top: 24px; }
+
+/* Sheets: Settings and Your Piano slide in from the right, over the player */
+dialog.sheet { position: fixed; inset: 0 0 0 auto; margin: 0; width: min(460px, 100vw); max-width: none; height: 100vh; max-height: none; padding: 0; border: 0; border-left: 1px solid var(--line-strong); border-radius: 0; overflow: hidden; }
+dialog.sheet[open] { display: flex; flex-direction: column; }
+.sheet > .settingsHeader { flex-shrink: 0; padding: 12px 16px 12px 28px; border-bottom: 1px solid var(--line); }
+.sheet > .settingsBody { flex: 1; min-height: 0; overflow-y: auto; overscroll-behavior: contain; padding: 4px 28px 24px; }
+.sheet > .settingsFooter { flex-shrink: 0; margin: 0; padding: 14px 28px; border-top: 1px solid var(--line); }
+.settingsBody section { padding: 18px 0; border-bottom: 1px solid var(--line); }
+.settingsBody section:last-child { border-bottom: 0; }
+.settingsBody h3 { margin: 0 0 10px; font-size: 16px; font-weight: 600; color: var(--amber); }
+.settingsBody p { margin: 6px 0; }
+.settingsBody label { display: block; margin: 14px 0 6px; font-size: 14px; }
+.settingsBody label.check { display: flex; margin: 14px 0 4px; font-size: 15px; }
+#tracks label.check { margin: 10px 0; }
+#speedLabel { float: right; color: var(--muted); font-variant-numeric: tabular-nums; }
+#speed { display: block; width: 100%; margin-top: 8px; }
+select {
+  display: block; width: 100%; min-height: 44px; margin-top: 8px; padding: 0 12px;
+  border: 1px solid var(--line-strong); border-radius: 10px; background: var(--raised); color: var(--text); font: inherit; font-size: 14px;
+}
+#pianoDialog .settingsBody button { width: 100%; margin: 10px 0; }
+#pianoDialog #connection { margin: 18px 0 8px; font-size: 14px; }
+
+#instrumentDialog { max-width: 680px; }
+.instrumentGrid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; margin-top: 20px; }
+.instrumentCard { min-height: 160px; flex-direction: column; gap: 10px; padding: 20px 12px; border: 2px solid transparent; border-radius: 16px; white-space: normal; text-align: center; }
+.instrumentCardIcon { font-size: 38px; line-height: 1.2; }
+.instrumentCard strong { font-size: 15px; }
+.instrumentCard > span:last-child { font-size: 12px; color: var(--muted); }
+.instrumentCard[aria-pressed="true"] { border-color: var(--amber); }
+.instrumentCard:disabled { cursor: wait; }
+#instrumentStatus { margin-top: 16px; }
+
+@media (max-width: 760px) {
+  .topbar { padding: 8px 12px; }
+  #title { font-size: 18px; }
+  .transport { gap: 10px; padding: 10px 12px 6px; }
+  .progress { order: -1; flex-basis: 100%; }
+  .legend { display: none; }
+  .instrumentGrid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}

@@ -4,7 +4,7 @@ import {resetLights, setBrightness} from './lights.js';
 import {enableAudio} from './audio.js';
 import {current, pause, play, seekTo} from './transport.js';
 import {clearLive} from './live.js';
-import {rearrange} from './arrange.js';
+import {rearrange, practisedHand} from './arrange.js';
 
 // Transport buttons, seek bar, keyboard shortcuts, fullscreen and page lifecycle.
 const formatTime = t => `${Math.floor(t / 60)}:${String(Math.floor(t % 60)).padStart(2, '0')}`;
@@ -36,7 +36,7 @@ async function stop() {
 
 // ← / → seek 5 s, with Shift 1 s, unless a dialog or form control has the focus.
 function seekWithArrowKeys(event) {
-  if (!state.noticeAccepted || $('settingsDialog').open || $('instrumentDialog').open || mainArea().inert) return;
+  if (!state.noticeAccepted || mainArea().inert || document.querySelector('dialog[open]')) return;
   if (event.defaultPrevented || event.ctrlKey || event.altKey || event.metaKey) return;
   if (event.key !== 'ArrowLeft' && event.key !== 'ArrowRight') return;
   if (event.target instanceof Element && event.target.closest('input,select,textarea,[contenteditable="true"],[role="slider"]')) return;
@@ -45,7 +45,7 @@ function seekWithArrowKeys(event) {
 }
 
 function changeHand() {
-  const hand = $('hand').value, other = hand === 'right' ? 'left' : 'right';
+  const hand = practisedHand(), other = hand === 'right' ? 'left' : 'right';
   const fit = rearrange();
   if (hand === 'both') { status(`Practising both hands. ${fit}`.trim()); return; }
   const notes = state.song.notes.filter(n => state.selected.has(n.track)).length;
@@ -68,11 +68,11 @@ export function initControls() {
   $('play').onclick = play;
   $('stop').onclick = stop;
   $('seek').oninput = () => seekTo(Number($('seek').value));
-  $('hand').onchange = changeHand;
+  for (const choice of document.querySelectorAll('input[name="hand"]')) choice.onchange = changeHand;
   $('fullscreen').onclick = toggleFullscreen;
   document.addEventListener('fullscreenchange', () => {
     const active = document.fullscreenElement === playerPanel();
-    $('fullscreen').textContent = active ? 'Exit fullscreen' : '⛶ Fullscreen';
+    $('fullscreen').setAttribute('aria-label', active ? 'Exit full screen' : 'Full screen');
     $('fullscreen').setAttribute('aria-pressed', String(active));
   });
   document.addEventListener('keydown', seekWithArrowKeys);

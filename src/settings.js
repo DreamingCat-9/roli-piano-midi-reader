@@ -92,7 +92,7 @@ function initSettingsDialog() {
     const resume = state.playing;
     pause();
     if ($('stepMode').checked && !state.input) {
-      status('Connect a keyboard input before starting Wait for my notes.');
+      status('Connect a keyboard input before starting Wait for me.');
       return;
     }
     if (resume) play();
@@ -103,13 +103,22 @@ function initSettingsDialog() {
     if (resume) play();
   };
   $('testDim').onclick = testDimKeys;
+  // Speed: 50 / 75 / 100 % in the transport bar, any step from 25 to 150 % in Settings
+  const presets = [...document.querySelectorAll('input[name="speedPreset"]')];
   $('speed').oninput = () => {
     const resume = state.playing;
     pause();
     state.rate = Number($('speed').value) / 100;
     $('speedLabel').textContent = `${Math.round(state.rate * 100)}%`;
+    for (const preset of presets) preset.checked = Number(preset.value) === Number($('speed').value);
     if (resume) play();
   };
+  for (const preset of presets) {
+    preset.onchange = () => {
+      $('speed').value = preset.value;
+      $('speed').oninput();
+    };
+  }
 }
 
 export function initSettings() {

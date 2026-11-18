@@ -16,7 +16,10 @@ export function current() {
   return Math.min(song.duration, practice?.next?.time ?? Infinity, position + (now() - origin) / 1000 * rate);
 }
 
-const setPlayLabel = () => { $('play').textContent = state.playing ? 'Ⅱ Pause' : '▶ Play'; };
+const setPlayLabel = () => {
+  $('play').classList.toggle('playing', state.playing); // shows the pause icon
+  $('play').setAttribute('aria-label', state.playing ? 'Pause' : 'Play');
+};
 
 function silence() {
   silenceLights();
