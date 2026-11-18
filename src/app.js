@@ -22,7 +22,7 @@ import {initNotice} from './notice.js';
 import {initSettings} from './settings.js';
 import {initSongControls, loadDemo} from './song.js';
 import {initKeyboard} from './keyboard.js';
-import {initDevice} from './device.js';
+import {initDevice, autoConnect} from './device.js';
 import {initControls, showTime} from './controls.js';
 import {current, tick} from './transport.js';
 import {updateButtonApi} from './pianoButtons.js';
@@ -38,7 +38,7 @@ function frame() {
   requestAnimationFrame(frame);
 }
 
-initNotice();
+initNotice(autoConnect); // the Piano links by itself once the notice is accepted
 initSettings();
 initKeyboard();
 initSongControls();

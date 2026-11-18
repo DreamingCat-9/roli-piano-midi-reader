@@ -9,9 +9,8 @@ Learn MIDI songs with falling notes, piano audio, and lights on your ROLI Piano.
 ## Get started
 
 1. Open the player in desktop Chrome and connect your Piano by USB.
-2. Click **Connect ROLI Piano** and allow MIDI/SysEx access.
-3. Select your MIDI output and keyboard input.
-4. Load a `.mid` file and press **Play**, or try the demo.
+2. Accept the notice and allow MIDI/SysEx access when Chrome asks (only the first time). The Piano links by itself, now and whenever it is plugged in again; **Connect ROLI Piano** does the same by hand.
+3. Load a `.mid` file and press **Play**, or try the demo.
 
 Choose tracks, slow down playback, and adjust how far ahead you see notes. Piano audio is on by default and also responds to your keyboard, including velocity and sustain. **Disconnect & clear lights** sends note releases and turns off key lighting; reconnecting restores brightness.
 

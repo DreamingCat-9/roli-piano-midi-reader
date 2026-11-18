@@ -2,7 +2,8 @@ import {$, mainArea} from './dom.js';
 import {state} from './state.js';
 
 // Experimental-software notice. The player stays inert until it is accepted, and it cannot be dismissed otherwise.
-export function initNotice() {
+// `onAccept` runs once it is accepted.
+export function initNotice(onAccept) {
   const dialog = $('riskNotice');
   dialog.close();
   dialog.showModal();
@@ -21,6 +22,7 @@ export function initNotice() {
     mainArea().inert = false;
     dialog.close();
     $('connect').focus();
+    onAccept?.();
   };
   $('riskLeave').onclick = () => location.replace('about:blank');
 }
