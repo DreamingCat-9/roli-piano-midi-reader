@@ -71,20 +71,28 @@ export function showRequired() {
   status(`Waiting for: ${names.join(', ')}. Play these notes on your keyboard.`);
 }
 
-// A key played on the keyboard. While practice waits, it counts towards the chord to play.
+// Seconds of song before a chord in which a key played for it counts ("Count notes played early").
+const earlyWindow = () => Number($('earlyWindow').value) * state.rate;
+
+// A key played on the keyboard. While practising, it counts towards the chord being waited for, or towards a chord
+// coming within the early window.
 export function pressPracticeNote(pitch) {
   const {practice} = state;
   if (!state.playing || !practice) return;
   // The timer may not have noticed the chord yet (it fires at most once a second on a hidden page).
   practice.arrive(current());
-  if (!practice.waiting) return;
-  const frozen = current();
-  if (practice.press(pitch)) {
-    state.position = frozen;
-    state.origin = now();
-    status('Correct. Continue to the next notes.');
-    tick(); // light what comes next now instead of on the next timer tick
-  } else showRequired();
+  if (practice.waiting && practice.missing.has(pitch)) {
+    const frozen = current();
+    if (practice.press(pitch)) {
+      state.position = frozen;
+      state.origin = now();
+      status('Correct. Continue to the next notes.');
+      tick(); // light what comes next now instead of on the next timer tick
+    } else showRequired();
+    return;
+  }
+  practice.pressEarly(pitch, current(), earlyWindow());
+  if (practice.waiting) showRequired();
 }
 
 // Runs every 25 ms: sends upcoming key lights, stops practice without a keyboard, and ends the song.
