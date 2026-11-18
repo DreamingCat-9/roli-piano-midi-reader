@@ -2,7 +2,9 @@
 
 Learn MIDI songs with falling notes, piano audio, and lights on your ROLI Piano. MIDI files stay on your computer. No Ableton required.
 
-**[Open the player](https://rolilearn4all.sariftech.com/)**
+**[Open the player](https://dreamingcat-9.github.io/roli-piano-midi-reader/)**
+
+Based on [ROLILearn4All](https://github.com/ClockworkPirate/ROLILearn4All) by ClockworkPirate, with wait-mode, lighting, hand and fitting improvements.
 
 ![ROLI Learn player with falling notes, track controls, and piano keyboard](docs/ui.png)
 
